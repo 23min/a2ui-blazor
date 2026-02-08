@@ -19,16 +19,23 @@
     private A2UIStreamClient? _client;
     private string? _error;
 
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
         _client = new A2UIStreamClient(Http, Reader, Dispatcher);
+        _ = ConnectInBackground();
+        return Task.CompletedTask;
+    }
+
+    private async Task ConnectInBackground()
+    {
         try
         {
-            await _client.ConnectAsync("/agents/contacts");
+            await _client!.ConnectAsync("/agents/contacts");
         }
         catch (Exception ex)
         {
             _error = $"Failed to connect: {ex.Message}";
+            await InvokeAsync(StateHasChanged);
         }
     }
 

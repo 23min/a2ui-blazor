@@ -5,7 +5,7 @@ Serves the same agents as the .NET server (restaurant finder, contacts, gallery)
 using raw SSE/JSONL. No .NET dependency. ~100 lines.
 
 Usage:
-    uv run uvicorn server:app --port 8000
+    uv run uvicorn server:app --port 5050
 """
 
 import json
@@ -52,7 +52,7 @@ async def restaurant_stream():
             {"id": "root", "component": "Column", "children": ["header", "search-row", "divider1", "results-list"]},
             {"id": "header", "component": "Text", "text": "Restaurant Finder", "usageHint": "h2"},
             {"id": "search-row", "component": "Row", "children": ["search-field", "search-btn"], "gap": "8", "alignment": "end"},
-            {"id": "search-field", "component": "TextField", "placeholder": "Search restaurants...", "label": "Search", "action": {"event": {"name": "search"}}},
+            {"id": "search-field", "component": "TextField", "placeholder": "Try 'Italian' or 'Sushi'...", "label": "Search by name or cuisine", "action": {"event": {"name": "search"}}},
             {"id": "search-btn", "component": "Button", "label": "Search", "action": {"event": {"name": "search"}}},
             {"id": "divider1", "component": "Divider"},
             {"id": "results-list", "component": "List", "data": "/restaurants", "template": {"componentId": "restaurant-card"}},
@@ -97,7 +97,7 @@ async def contacts_stream():
             {"id": "root", "component": "Column", "children": ["header", "search-row", "divider", "contact-list"], "gap": "12"},
             {"id": "header", "component": "Text", "text": "Contact Directory", "usageHint": "h2"},
             {"id": "search-row", "component": "Row", "children": ["search-input", "search-btn"], "gap": "8", "alignment": "end"},
-            {"id": "search-input", "component": "TextField", "placeholder": "Search contacts...", "label": "Search", "action": {"event": {"name": "search"}}},
+            {"id": "search-input", "component": "TextField", "placeholder": "Try 'Engineering' or 'Alice'...", "label": "Search by name or department", "action": {"event": {"name": "search"}}},
             {"id": "search-btn", "component": "Button", "label": "Search", "action": {"event": {"name": "search"}}},
             {"id": "divider", "component": "Divider"},
             {"id": "contact-list", "component": "List", "data": "/contacts", "template": {"componentId": "contact-row"}},

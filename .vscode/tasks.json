@@ -34,7 +34,7 @@
     {
       "label": "Start Python Server",
       "type": "shell",
-      "command": "cd samples/python-server && uv run uvicorn server:app --port 8000",
+      "command": "cd samples/python-server && uv run uvicorn server:app --port 5050",
       "isBackground": true,
       "problemMatcher": {
         "pattern": { "regexp": "^$" },
@@ -90,19 +90,19 @@
     {
       "label": "Demo: .NET + WASM",
       "dependsOn": ["Start .NET Server", "Start Blazor WASM SPA"],
-      "dependsOrder": "parallel",
+      "dependsOrder": "sequence",
       "problemMatcher": []
     },
     {
       "label": "Demo: Python + WASM",
       "dependsOn": ["Start Python Server", "Start Blazor WASM SPA"],
-      "dependsOrder": "parallel",
+      "dependsOrder": "sequence",
       "problemMatcher": []
     },
     {
       "label": "Demo: .NET + Blazor Server",
       "dependsOn": ["Start .NET Server", "Start Blazor Server App"],
-      "dependsOrder": "parallel",
+      "dependsOrder": "sequence",
       "problemMatcher": []
     }
   ]

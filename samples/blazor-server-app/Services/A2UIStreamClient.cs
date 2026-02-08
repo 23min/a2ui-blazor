@@ -37,7 +37,17 @@ public sealed class A2UIStreamClient : IDisposable
 
     public async Task SendActionAsync(string agentPath, A2UIUserAction action)
     {
-        await _http.PostAsJsonAsync(agentPath, action);
+        var request = new HttpRequestMessage(HttpMethod.Post, agentPath);
+        request.Content = JsonContent.Create(action);
+
+        var response = await _http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+        response.EnsureSuccessStatusCode();
+
+        var stream = await response.Content.ReadAsStreamAsync();
+        await foreach (var message in _reader.ReadMessagesAsync(stream, CancellationToken.None))
+        {
+            _dispatcher.Dispatch(message);
+        }
     }
 
     public void Dispose()

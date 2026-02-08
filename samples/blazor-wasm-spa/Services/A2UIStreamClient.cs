@@ -1,6 +1,7 @@
 using A2UI.Blazor.Protocol;
 using A2UI.Blazor.Services;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Components.WebAssembly.Http;
 
 namespace blazor_wasm_spa.Services;
 
@@ -28,6 +29,7 @@ public sealed class A2UIStreamClient : IDisposable
         _cts = new CancellationTokenSource();
 
         var request = new HttpRequestMessage(HttpMethod.Get, agentPath);
+        request.SetBrowserResponseStreamingEnabled(true);
         var response = await _http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, _cts.Token);
         response.EnsureSuccessStatusCode();
 
@@ -41,7 +43,18 @@ public sealed class A2UIStreamClient : IDisposable
 
     public async Task SendActionAsync(string agentPath, A2UIUserAction action)
     {
-        await _http.PostAsJsonAsync(agentPath, action);
+        var request = new HttpRequestMessage(HttpMethod.Post, agentPath);
+        request.Content = JsonContent.Create(action);
+        request.SetBrowserResponseStreamingEnabled(true);
+
+        var response = await _http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+        response.EnsureSuccessStatusCode();
+
+        var stream = await response.Content.ReadAsStreamAsync();
+        await foreach (var message in _reader.ReadMessagesAsync(stream, CancellationToken.None))
+        {
+            _dispatcher.Dispatch(message);
+        }
     }
 
     public void Disconnect()
