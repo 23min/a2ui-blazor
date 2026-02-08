@@ -1,0 +1,42 @@
+@page "/restaurant"
+@using blazor_server_app.Services
+@implements IDisposable
+
+<h2>Restaurant Finder</h2>
+
+<A2UISurface SurfaceId="restaurant-finder" OnAction="HandleAction" />
+
+@if (_error is not null)
+{
+    <div class="error-message">@_error</div>
+}
+
+@code {
+    [Inject] private HttpClient Http { get; set; } = default!;
+    [Inject] private JsonlStreamReader Reader { get; set; } = default!;
+    [Inject] private MessageDispatcher Dispatcher { get; set; } = default!;
+
+    private A2UIStreamClient? _client;
+    private string? _error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _client = new A2UIStreamClient(Http, Reader, Dispatcher);
+        try
+        {
+            await _client.ConnectAsync("/agents/restaurant");
+        }
+        catch (Exception ex)
+        {
+            _error = $"Failed to connect: {ex.Message}";
+        }
+    }
+
+    private async Task HandleAction(A2UIUserAction action)
+    {
+        if (_client is not null)
+            await _client.SendActionAsync("/agents/restaurant", action);
+    }
+
+    public void Dispose() => _client?.Dispose();
+}

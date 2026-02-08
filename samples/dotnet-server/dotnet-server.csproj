@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\A2UI.Blazor.Server\A2UI.Blazor.Server.csproj" />
+  </ItemGroup>
+
+</Project>

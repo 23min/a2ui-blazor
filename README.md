@@ -65,14 +65,43 @@ cd a2ui-blazor
 dotnet build
 ```
 
-### Run the .NET Server + Blazor WASM SPA
+### Run the Samples
+
+**Option A: .NET server + Blazor WASM SPA** (two terminals)
 
 ```bash
-# Terminal 1 — start the .NET A2UI server
-dotnet run --project samples/A2UI.Blazor.Example.Server
+# Terminal 1 — .NET A2UI server on port 5050
+dotnet run --project samples/dotnet-server
 
-# Open http://localhost:5000 in your browser
+# Terminal 2 — Blazor WASM SPA (dev server)
+dotnet run --project samples/blazor-wasm-spa
 ```
+
+**Option B: Python server + Blazor WASM SPA** (two terminals)
+
+```bash
+# Terminal 1 — Python A2UI server on port 8000
+cd samples/python-server
+pip install -r requirements.txt
+uvicorn server:app --port 8000
+
+# Terminal 2 — update the SPA to point at the Python server
+# Edit samples/blazor-wasm-spa/wwwroot/appsettings.json:
+#   "A2UIServerUrl": "http://localhost:8000"
+dotnet run --project samples/blazor-wasm-spa
+```
+
+**Option C: Blazor Server app** (enterprise SSR model)
+
+```bash
+# Start the .NET A2UI server, then:
+dotnet run --project samples/blazor-server-app
+# Open http://localhost:5100
+```
+
+> All three Blazor clients render the same A2UI surfaces.
+> The Python and .NET servers serve the same agents.
+> Mix and match freely.
 
 ### Use A2UI.Blazor in Your Own App
 
@@ -208,9 +237,23 @@ Targets [A2UI specification v0.9](https://github.com/google/A2UI/blob/main/speci
 - **System.Text.Json** (zero third-party dependencies in the core library)
 - **ASP.NET Core** (server library only)
 
+## Project Structure
+
+```
+src/
+  A2UI.Blazor/                   # Core renderer library (NuGet deliverable)
+  A2UI.Blazor.Server/            # Server helpers for .NET (NuGet deliverable)
+
+samples/
+  python-server/                 # Python FastAPI A2UI server
+  dotnet-server/                 # .NET Minimal API A2UI server
+  blazor-wasm-spa/               # Standalone Blazor WebAssembly SPA
+  blazor-server-app/             # Blazor Server app (enterprise SSR)
+```
+
 ## Project Status
 
-This project is under active development. The core renderer and server libraries are functional with all 16 standard components implemented. See [docs/prd/samples-restructure.md](docs/prd/samples-restructure.md) for the planned sample restructuring.
+Under active development. Core renderer and server libraries are functional with all 16 standard components implemented. Four samples demonstrate the full matrix of server (Python, .NET) and client (WASM, Server) combinations.
 
 ## References
 
