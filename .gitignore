@@ -49,5 +49,10 @@ Thumbs.db
 ## Blazor
 wwwroot/css/bootstrap/
 
+## Python
+__pycache__/
+*.pyc
+.venv/
+
 ## User secrets
 secrets.json

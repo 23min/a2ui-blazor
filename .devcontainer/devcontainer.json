@@ -24,7 +24,7 @@
       }
     }
   },
-  "forwardPorts": [5050, 5100, 8000],
+  "forwardPorts": [5050, 5100, 5200, 8000],
   "postCreateCommand": "dotnet --version && uv --version",
   "remoteUser": "vscode"
 }

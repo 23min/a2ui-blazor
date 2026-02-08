@@ -38,14 +38,9 @@ public sealed class ComponentBuilder
 
     public ComponentBuilder Action(string eventName, Dictionary<string, object>? context = null)
     {
-        var action = new Dictionary<string, object>
-        {
-            ["event"] = new Dictionary<string, object?>
-            {
-                ["name"] = eventName,
-                ["context"] = context
-            }
-        };
+        var eventObj = new Dictionary<string, object> { ["name"] = eventName };
+        if (context is not null) eventObj["context"] = context;
+        var action = new Dictionary<string, object> { ["event"] = eventObj };
         return Set("action", action);
     }
 

@@ -21,7 +21,7 @@ public sealed class A2UIStreamWriter
 
     public A2UIStreamWriter(Stream stream, bool useSse = true)
     {
-        _writer = new StreamWriter(stream) { AutoFlush = true };
+        _writer = new StreamWriter(stream);
         _useSse = useSse;
     }
 
@@ -30,13 +30,13 @@ public sealed class A2UIStreamWriter
         string? catalogId = null,
         bool sendDataModel = false)
     {
-        var message = new Dictionary<string, object?>
+        var message = new Dictionary<string, object>
         {
             ["type"] = "createSurface",
-            ["surfaceId"] = surfaceId,
-            ["catalogId"] = catalogId,
-            ["sendDataModel"] = sendDataModel ? true : null
+            ["surfaceId"] = surfaceId
         };
+        if (catalogId is not null) message["catalogId"] = catalogId;
+        if (sendDataModel) message["sendDataModel"] = true;
         await WriteMessageAsync(message);
     }
 
@@ -58,13 +58,13 @@ public sealed class A2UIStreamWriter
         string? path = null,
         object? value = null)
     {
-        var message = new Dictionary<string, object?>
+        var message = new Dictionary<string, object>
         {
             ["type"] = "updateDataModel",
-            ["surfaceId"] = surfaceId,
-            ["path"] = path,
-            ["value"] = value
+            ["surfaceId"] = surfaceId
         };
+        if (path is not null) message["path"] = path;
+        if (value is not null) message["value"] = value;
         await WriteMessageAsync(message);
     }
 
@@ -108,5 +108,7 @@ public sealed class A2UIStreamWriter
         {
             await _writer.WriteLineAsync(json);
         }
+
+        await _writer.FlushAsync();
     }
 }
