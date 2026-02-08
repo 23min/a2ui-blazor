@@ -1,0 +1,14 @@
+@inherits A2UIComponentBase
+
+@{
+    var src = GetString("src") ?? "";
+    var controls = GetBool("controls", defaultValue: true);
+}
+
+<div class="a2ui-audio">
+    <audio class="a2ui-audio-player"
+           src="@src"
+           controls="@controls">
+        Your browser does not support audio playback.
+    </audio>
+</div>

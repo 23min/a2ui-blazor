@@ -1,0 +1,53 @@
+@using A2UI.Blazor.Protocol
+@using A2UI.Blazor.Services
+@implements IDisposable
+
+<CascadingValue Value="SurfaceManagerService" IsFixed="true">
+    <div class="a2ui-surface" data-surface-id="@SurfaceId">
+        @if (_surface?.GetRoot() is { } root)
+        {
+            <A2UIComponentRenderer Data="root" Surface="_surface" OnAction="HandleAction" />
+        }
+        else if (_surface is null)
+        {
+            <div class="a2ui-surface-loading">Connecting...</div>
+        }
+    </div>
+</CascadingValue>
+
+@code {
+    [Parameter, EditorRequired]
+    public string SurfaceId { get; set; } = string.Empty;
+
+    [Parameter]
+    public EventCallback<A2UIUserAction> OnAction { get; set; }
+
+    [Inject]
+    private SurfaceManager SurfaceManagerService { get; set; } = default!;
+
+    private A2UISurfaceState? _surface;
+
+    protected override void OnInitialized()
+    {
+        SurfaceManagerService.OnSurfaceChanged += HandleSurfaceChanged;
+        _surface = SurfaceManagerService.GetSurface(SurfaceId);
+    }
+
+    private void HandleSurfaceChanged(string changedSurfaceId)
+    {
+        if (changedSurfaceId != SurfaceId) return;
+        _surface = SurfaceManagerService.GetSurface(SurfaceId);
+        InvokeAsync(StateHasChanged);
+    }
+
+    private async Task HandleAction(A2UIUserAction action)
+    {
+        if (OnAction.HasDelegate)
+            await OnAction.InvokeAsync(action);
+    }
+
+    public void Dispose()
+    {
+        SurfaceManagerService.OnSurfaceChanged -= HandleSurfaceChanged;
+    }
+}

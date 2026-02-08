@@ -1,0 +1,44 @@
+@page "/gallery"
+@using A2UI.Blazor.Example.Client.Services
+@implements IDisposable
+
+<h2>Component Gallery</h2>
+
+<A2UISurface SurfaceId="gallery" OnAction="HandleAction" />
+
+@if (_error is not null)
+{
+    <div class="error-message">@_error</div>
+}
+
+@code {
+    [Inject] private HttpClient Http { get; set; } = default!;
+    [Inject] private JsonlStreamReader Reader { get; set; } = default!;
+    [Inject] private MessageDispatcher Dispatcher { get; set; } = default!;
+
+    private A2UIStreamClient? _client;
+    private string? _error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _client = new A2UIStreamClient(Http, Reader, Dispatcher);
+        try
+        {
+            await _client.ConnectAsync("/agents/gallery");
+        }
+        catch (Exception ex)
+        {
+            _error = $"Failed to connect: {ex.Message}";
+        }
+    }
+
+    private Task HandleAction(A2UIUserAction action)
+    {
+        return Task.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        _client?.Dispose();
+    }
+}

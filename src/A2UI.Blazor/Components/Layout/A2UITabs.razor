@@ -1,0 +1,49 @@
+@using System.Text.Json
+@using A2UI.Blazor.Protocol
+@inherits A2UIComponentBase
+
+@{
+    var tabsElement = GetElement("tabs");
+    var tabs = new List<(string Label, string ContentId)>();
+    if (tabsElement?.ValueKind == JsonValueKind.Array)
+    {
+        foreach (var tab in tabsElement.Value.EnumerateArray())
+        {
+            var label = tab.TryGetProperty("label", out var l) ? l.GetString() ?? "" : "";
+            var contentId = tab.TryGetProperty("contentId", out var c) ? c.GetString() ?? "" : "";
+            tabs.Add((label, contentId));
+        }
+    }
+}
+
+<div class="a2ui-tabs">
+    <div class="a2ui-tabs-header" role="tablist">
+        @for (var i = 0; i < tabs.Count; i++)
+        {
+            var idx = i;
+            <button class="a2ui-tab-button @(idx == _activeTab ? "active" : "")"
+                    role="tab"
+                    aria-selected="@(idx == _activeTab)"
+                    @onclick="() => _activeTab = idx">
+                @tabs[idx].Label
+            </button>
+        }
+    </div>
+    <div class="a2ui-tabs-content" role="tabpanel">
+        @if (_activeTab < tabs.Count)
+        {
+            var contentId = tabs[_activeTab].ContentId;
+            if (Surface.Components.TryGetValue(contentId, out var content))
+            {
+                <A2UIComponentRenderer Data="content" Surface="Surface" OnAction="OnAction" />
+            }
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<A2UIUserAction> OnAction { get; set; }
+
+    private int _activeTab;
+}

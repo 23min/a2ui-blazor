@@ -1,0 +1,43 @@
+@using A2UI.Blazor.Protocol
+@using A2UI.Blazor.Services
+
+@if (_componentType is not null)
+{
+    <DynamicComponent Type="_componentType" Parameters="_parameters" />
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public A2UIComponentData Data { get; set; } = default!;
+
+    [Parameter, EditorRequired]
+    public A2UISurfaceState Surface { get; set; } = default!;
+
+    [CascadingParameter]
+    public SurfaceManager? SurfaceManager { get; set; }
+
+    [Parameter]
+    public EventCallback<A2UIUserAction> OnAction { get; set; }
+
+    [Inject]
+    private ComponentRegistry Registry { get; set; } = default!;
+
+    private Type? _componentType;
+    private Dictionary<string, object>? _parameters;
+
+    protected override void OnParametersSet()
+    {
+        _componentType = Registry.Resolve(Data.Component);
+        if (_componentType is not null)
+        {
+            _parameters = new Dictionary<string, object>
+            {
+                ["Data"] = Data,
+                ["Surface"] = Surface
+            };
+
+            if (OnAction.HasDelegate)
+                _parameters["OnAction"] = OnAction;
+        }
+    }
+}

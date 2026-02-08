@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\A2UI.Blazor.Server\A2UI.Blazor.Server.csproj" />
+    <ProjectReference Include="..\A2UI.Blazor.Example.Client\A2UI.Blazor.Example.Client.csproj" />
+  </ItemGroup>
+
+</Project>

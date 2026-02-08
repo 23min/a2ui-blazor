@@ -1,0 +1,13 @@
+@inherits A2UIComponentBase
+
+@{
+    var src = GetString("src") ?? "";
+    var alt = GetString("alt") ?? "";
+    var fit = GetString("fit") ?? "cover";
+    var usageHint = GetString("usageHint");
+}
+
+<img class="a2ui-image @(usageHint is not null ? $"a2ui-image-{usageHint}" : "")"
+     src="@src"
+     alt="@alt"
+     style="object-fit: @fit;" />

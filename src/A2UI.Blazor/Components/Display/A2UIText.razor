@@ -1,0 +1,31 @@
+@inherits A2UIComponentBase
+
+@{
+    var text = GetString("text") ?? "";
+    var usageHint = GetString("usageHint") ?? "body";
+}
+
+@switch (usageHint)
+{
+    case "h1":
+        <h1 class="a2ui-text a2ui-text-h1">@text</h1>
+        break;
+    case "h2":
+        <h2 class="a2ui-text a2ui-text-h2">@text</h2>
+        break;
+    case "h3":
+        <h3 class="a2ui-text a2ui-text-h3">@text</h3>
+        break;
+    case "h4":
+        <h4 class="a2ui-text a2ui-text-h4">@text</h4>
+        break;
+    case "h5":
+        <h5 class="a2ui-text a2ui-text-h5">@text</h5>
+        break;
+    case "caption":
+        <span class="a2ui-text a2ui-text-caption">@text</span>
+        break;
+    default:
+        <p class="a2ui-text a2ui-text-body">@text</p>
+        break;
+}

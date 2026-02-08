@@ -1,0 +1,44 @@
+@using A2UI.Blazor.Protocol
+@inherits A2UIComponentBase
+
+@{
+    var distribution = GetString("distribution") ?? "start";
+    var alignment = GetString("alignment") ?? "center";
+    var gap = GetString("gap") ?? "8";
+    var childIds = GetChildIds();
+}
+
+<div class="a2ui-row" style="justify-content: @MapDistribution(distribution); align-items: @MapAlignment(alignment); gap: @(gap)px;">
+    @foreach (var childId in childIds)
+    {
+        if (Surface.Components.TryGetValue(childId, out var child))
+        {
+            <A2UIComponentRenderer Data="child" Surface="Surface" OnAction="OnAction" />
+        }
+    }
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<A2UIUserAction> OnAction { get; set; }
+
+    private static string MapDistribution(string distribution) => distribution switch
+    {
+        "start" => "flex-start",
+        "center" => "center",
+        "end" => "flex-end",
+        "spaceBetween" => "space-between",
+        "spaceAround" => "space-around",
+        "spaceEvenly" => "space-evenly",
+        _ => "flex-start"
+    };
+
+    private static string MapAlignment(string alignment) => alignment switch
+    {
+        "start" => "flex-start",
+        "center" => "center",
+        "end" => "flex-end",
+        "stretch" => "stretch",
+        _ => "center"
+    };
+}

@@ -1,0 +1,30 @@
+@using A2UI.Blazor.Protocol
+@inherits A2UIComponentBase
+
+@{
+    var title = GetString("title");
+    var childIds = GetChildIds();
+}
+
+<div class="a2ui-card">
+    @if (title is not null)
+    {
+        <div class="a2ui-card-header">
+            <h3 class="a2ui-card-title">@title</h3>
+        </div>
+    }
+    <div class="a2ui-card-body">
+        @foreach (var childId in childIds)
+        {
+            if (Surface.Components.TryGetValue(childId, out var child))
+            {
+                <A2UIComponentRenderer Data="child" Surface="Surface" OnAction="OnAction" />
+            }
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<A2UIUserAction> OnAction { get; set; }
+}

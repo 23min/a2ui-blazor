@@ -1,0 +1,18 @@
+@inherits A2UIComponentBase
+
+@{
+    var src = GetString("src") ?? "";
+    var poster = GetString("poster");
+    var autoplay = GetBool("autoplay");
+    var controls = GetBool("controls", defaultValue: true);
+}
+
+<div class="a2ui-video">
+    <video class="a2ui-video-player"
+           src="@src"
+           poster="@poster"
+           autoplay="@autoplay"
+           controls="@controls">
+        Your browser does not support video playback.
+    </video>
+</div>

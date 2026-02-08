@@ -1,0 +1,53 @@
+@using System.Text.Json
+@using A2UI.Blazor.Protocol
+@inherits A2UIComponentBase
+
+@{
+    var label = GetString("label") ?? "Button";
+    var variant = GetString("variant") ?? "primary";
+    var disabled = GetBool("disabled");
+}
+
+<button class="a2ui-button a2ui-button-@variant"
+        disabled="@disabled"
+        @onclick="HandleClick">
+    @label
+</button>
+
+@code {
+    [Parameter]
+    public EventCallback<A2UIUserAction> OnAction { get; set; }
+
+    private async Task HandleClick()
+    {
+        var action = GetAction();
+        if (action?.Event is not null)
+        {
+            var userAction = new A2UIUserAction
+            {
+                Name = action.Event.Name,
+                SurfaceId = Surface.SurfaceId,
+                SourceComponentId = Data.Id,
+                Context = action.Event.Context?.ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => (object?)ResolveContextValue(kvp.Value))
+            };
+            await OnAction.InvokeAsync(userAction);
+        }
+    }
+
+    private object? ResolveContextValue(JsonElement element)
+    {
+        if (element.ValueKind == JsonValueKind.String)
+        {
+            var val = element.GetString();
+            if (val is not null && val.StartsWith('/') && SurfaceManager is not null)
+            {
+                var resolved = SurfaceManager.ResolveBinding(Surface.SurfaceId, val);
+                if (resolved.HasValue) return resolved.Value.ToString();
+            }
+            return val;
+        }
+        return element.ToString();
+    }
+}

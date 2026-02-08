@@ -1,0 +1,47 @@
+@using A2UI.Blazor.Protocol
+@inherits A2UIComponentBase
+
+@{
+    var label = GetString("label");
+    var options = GetStringList("options");
+    var selected = GetString("selected") ?? "";
+    var disabled = GetBool("disabled");
+}
+
+<div class="a2ui-choicepicker">
+    @if (label is not null)
+    {
+        <label class="a2ui-choicepicker-label">@label</label>
+    }
+    <select class="a2ui-choicepicker-select"
+            disabled="@disabled"
+            value="@selected"
+            @onchange="HandleChange">
+        <option value="">-- Select --</option>
+        @foreach (var option in options)
+        {
+            <option value="@option" selected="@(option == selected)">@option</option>
+        }
+    </select>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<A2UIUserAction> OnAction { get; set; }
+
+    private async Task HandleChange(ChangeEventArgs e)
+    {
+        var action = GetAction();
+        if (action?.Event is not null)
+        {
+            var userAction = new A2UIUserAction
+            {
+                Name = action.Event.Name,
+                SurfaceId = Surface.SurfaceId,
+                SourceComponentId = Data.Id,
+                Context = new Dictionary<string, object?> { ["selected"] = e.Value?.ToString() }
+            };
+            await OnAction.InvokeAsync(userAction);
+        }
+    }
+}

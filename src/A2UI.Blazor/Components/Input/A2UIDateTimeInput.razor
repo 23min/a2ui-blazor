@@ -1,0 +1,42 @@
+@using A2UI.Blazor.Protocol
+@inherits A2UIComponentBase
+
+@{
+    var label = GetString("label");
+    var value = GetString("value") ?? "";
+    var inputType = GetString("inputType") ?? "date";
+    var disabled = GetBool("disabled");
+}
+
+<div class="a2ui-datetime">
+    @if (label is not null)
+    {
+        <label class="a2ui-datetime-label">@label</label>
+    }
+    <input class="a2ui-datetime-input"
+           type="@inputType"
+           value="@value"
+           disabled="@disabled"
+           @onchange="HandleChange" />
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<A2UIUserAction> OnAction { get; set; }
+
+    private async Task HandleChange(ChangeEventArgs e)
+    {
+        var action = GetAction();
+        if (action?.Event is not null)
+        {
+            var userAction = new A2UIUserAction
+            {
+                Name = action.Event.Name,
+                SurfaceId = Surface.SurfaceId,
+                SourceComponentId = Data.Id,
+                Context = new Dictionary<string, object?> { ["value"] = e.Value?.ToString() }
+            };
+            await OnAction.InvokeAsync(userAction);
+        }
+    }
+}

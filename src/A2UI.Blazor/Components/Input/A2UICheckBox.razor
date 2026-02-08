@@ -1,0 +1,37 @@
+@using A2UI.Blazor.Protocol
+@inherits A2UIComponentBase
+
+@{
+    var label = GetString("label") ?? "";
+    var isChecked = GetBool("checked");
+    var disabled = GetBool("disabled");
+}
+
+<label class="a2ui-checkbox">
+    <input type="checkbox"
+           checked="@isChecked"
+           disabled="@disabled"
+           @onchange="HandleChange" />
+    <span class="a2ui-checkbox-label">@label</span>
+</label>
+
+@code {
+    [Parameter]
+    public EventCallback<A2UIUserAction> OnAction { get; set; }
+
+    private async Task HandleChange(ChangeEventArgs e)
+    {
+        var action = GetAction();
+        if (action?.Event is not null)
+        {
+            var userAction = new A2UIUserAction
+            {
+                Name = action.Event.Name,
+                SurfaceId = Surface.SurfaceId,
+                SourceComponentId = Data.Id,
+                Context = new Dictionary<string, object?> { ["checked"] = e.Value }
+            };
+            await OnAction.InvokeAsync(userAction);
+        }
+    }
+}

@@ -1,19 +1,19 @@
 {
   "name": "A2UI Blazor",
-  "image": "mcr.microsoft.com/dotnet/sdk:8.0",
+  "image": "mcr.microsoft.com/devcontainers/dotnet:8.0",
   "features": {
     "ghcr.io/devcontainers/features/node:1": {
       "version": "20"
     },
-    "ghcr.io/devcontainers/features/git:1": {},
-    "ghcr.io/devcontainers/features/github-cli:1": {}
+"ghcr.io/devcontainers/features/github-cli:1": {}
   },
   "customizations": {
     "vscode": {
       "extensions": [
         "ms-dotnettools.csharp",
         "ms-dotnettools.csdevkit",
-        "ms-dotnettools.blazorwasm-companion"
+        "ms-dotnettools.blazorwasm-companion",
+        "anthropic.claude-code"
       ],
       "settings": {
         "dotnet.defaultSolution": "A2UI.Blazor.sln"

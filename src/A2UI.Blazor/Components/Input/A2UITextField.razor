@@ -1,0 +1,55 @@
+@using A2UI.Blazor.Protocol
+@inherits A2UIComponentBase
+
+@{
+    var label = GetString("label");
+    var placeholder = GetString("placeholder") ?? "";
+    var value = GetString("value") ?? "";
+    var disabled = GetBool("disabled");
+    var multiline = GetBool("multiline");
+}
+
+<div class="a2ui-textfield">
+    @if (label is not null)
+    {
+        <label class="a2ui-textfield-label">@label</label>
+    }
+    @if (multiline)
+    {
+        <textarea class="a2ui-textfield-input"
+                  placeholder="@placeholder"
+                  disabled="@disabled"
+                  value="@value"
+                  @oninput="HandleInput"></textarea>
+    }
+    else
+    {
+        <input class="a2ui-textfield-input"
+               type="text"
+               placeholder="@placeholder"
+               disabled="@disabled"
+               value="@value"
+               @oninput="HandleInput" />
+    }
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<A2UIUserAction> OnAction { get; set; }
+
+    private async Task HandleInput(ChangeEventArgs e)
+    {
+        var action = GetAction();
+        if (action?.Event is not null)
+        {
+            var userAction = new A2UIUserAction
+            {
+                Name = action.Event.Name,
+                SurfaceId = Surface.SurfaceId,
+                SourceComponentId = Data.Id,
+                Context = new Dictionary<string, object?> { ["value"] = e.Value?.ToString() }
+            };
+            await OnAction.InvokeAsync(userAction);
+        }
+    }
+}

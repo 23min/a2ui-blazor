@@ -1,0 +1,8 @@
+@inherits A2UIComponentBase
+
+@{
+    var icon = GetString("icon") ?? "";
+    var size = GetString("size") ?? "24";
+}
+
+<span class="a2ui-icon" style="font-size: @(size)px;" aria-hidden="true">@icon</span>

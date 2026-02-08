@@ -1,0 +1,32 @@
+@using A2UI.Blazor.Protocol
+@inherits A2UIComponentBase
+
+@{
+    var alignment = GetString("alignment") ?? "stretch";
+    var gap = GetString("gap") ?? "8";
+    var childIds = GetChildIds();
+}
+
+<div class="a2ui-column" style="align-items: @MapAlignment(alignment); gap: @(gap)px;">
+    @foreach (var childId in childIds)
+    {
+        if (Surface.Components.TryGetValue(childId, out var child))
+        {
+            <A2UIComponentRenderer Data="child" Surface="Surface" OnAction="OnAction" />
+        }
+    }
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<A2UIUserAction> OnAction { get; set; }
+
+    private static string MapAlignment(string alignment) => alignment switch
+    {
+        "start" => "flex-start",
+        "center" => "center",
+        "end" => "flex-end",
+        "stretch" => "stretch",
+        _ => "stretch"
+    };
+}

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <PackageId>A2UI.Blazor</PackageId>
+    <Description>A2UI protocol renderer for Blazor WebAssembly</Description>
+    <Authors>A2UI Blazor Contributors</Authors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0" />
+  </ItemGroup>
+
+</Project>
