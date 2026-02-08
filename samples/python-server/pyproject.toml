@@ -1,0 +1,9 @@
+[project]
+name = "a2ui-python-server"
+version = "0.1.0"
+description = "Minimal A2UI server in Python — proves the Blazor client is protocol-agnostic"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.104",
+    "uvicorn>=0.24",
+]

@@ -5,7 +5,11 @@
     "ghcr.io/devcontainers/features/node:1": {
       "version": "20"
     },
-"ghcr.io/devcontainers/features/github-cli:1": {}
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.12"
+    },
+    "ghcr.io/va-h/devcontainers-features/uv:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
   },
   "customizations": {
     "vscode": {
@@ -20,7 +24,7 @@
       }
     }
   },
-  "forwardPorts": [5000, 5001, 5173],
-  "postCreateCommand": "dotnet --version",
+  "forwardPorts": [5050, 5100, 8000],
+  "postCreateCommand": "dotnet --version && uv --version",
   "remoteUser": "vscode"
 }

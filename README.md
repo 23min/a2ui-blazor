@@ -55,7 +55,7 @@ builder.Services.AddA2UIBlazor(registry =>
 ### Prerequisites
 
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- Python 3.10+ (only for the Python server sample)
+- [uv](https://docs.astral.sh/uv/) + Python 3.10+ (only for the Python server sample)
 
 ### Build
 
@@ -82,8 +82,7 @@ dotnet run --project samples/blazor-wasm-spa
 ```bash
 # Terminal 1 — Python A2UI server on port 8000
 cd samples/python-server
-pip install -r requirements.txt
-uvicorn server:app --port 8000
+uv run uvicorn server:app --port 8000
 
 # Terminal 2 — update the SPA to point at the Python server
 # Edit samples/blazor-wasm-spa/wwwroot/appsettings.json:

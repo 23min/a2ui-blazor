@@ -5,8 +5,7 @@ Serves the same agents as the .NET server (restaurant finder, contacts, gallery)
 using raw SSE/JSONL. No .NET dependency. ~100 lines.
 
 Usage:
-    pip install -r requirements.txt
-    uvicorn server:app --port 8000
+    uv run uvicorn server:app --port 8000
 """
 
 import json
