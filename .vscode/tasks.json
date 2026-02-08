@@ -1,0 +1,109 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build All",
+      "type": "process",
+      "command": "dotnet",
+      "args": ["build"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Start .NET Server",
+      "type": "process",
+      "command": "dotnet",
+      "args": ["run", "--project", "samples/dotnet-server"],
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": { "regexp": "^$" },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*Building\\.\\.\\.",
+          "endsPattern": "^.*Now listening on"
+        }
+      },
+      "presentation": {
+        "group": "servers",
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "Start Python Server",
+      "type": "shell",
+      "command": "cd samples/python-server && pip install -q -r requirements.txt && uvicorn server:app --port 8000",
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": { "regexp": "^$" },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*",
+          "endsPattern": "^.*Uvicorn running"
+        }
+      },
+      "presentation": {
+        "group": "servers",
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "Start Blazor WASM SPA",
+      "type": "process",
+      "command": "dotnet",
+      "args": ["run", "--project", "samples/blazor-wasm-spa"],
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": { "regexp": "^$" },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*Building\\.\\.\\.",
+          "endsPattern": "^.*Now listening on"
+        }
+      },
+      "presentation": {
+        "group": "clients",
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "Start Blazor Server App",
+      "type": "process",
+      "command": "dotnet",
+      "args": ["run", "--project", "samples/blazor-server-app"],
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": { "regexp": "^$" },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*Building\\.\\.\\.",
+          "endsPattern": "^.*Now listening on"
+        }
+      },
+      "presentation": {
+        "group": "clients",
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "Demo: .NET + WASM",
+      "dependsOn": ["Start .NET Server", "Start Blazor WASM SPA"],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
+    },
+    {
+      "label": "Demo: Python + WASM",
+      "dependsOn": ["Start Python Server", "Start Blazor WASM SPA"],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
+    },
+    {
+      "label": "Demo: .NET + Blazor Server",
+      "dependsOn": ["Start .NET Server", "Start Blazor Server App"],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
+    }
+  ]
+}

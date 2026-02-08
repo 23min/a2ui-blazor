@@ -1,0 +1,48 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": ".NET Server",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/samples/dotnet-server/bin/Debug/net8.0/dotnet-server.dll",
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "Build All",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    {
+      "name": "Blazor WASM SPA",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/samples/blazor-wasm-spa/bin/Debug/net8.0/blazor-wasm-spa.dll",
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "Build All",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    {
+      "name": "Blazor Server App",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/samples/blazor-server-app/bin/Debug/net8.0/blazor-server-app.dll",
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "Build All",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Demo: .NET Server + WASM SPA",
+      "configurations": [".NET Server", "Blazor WASM SPA"]
+    },
+    {
+      "name": "Demo: .NET Server + Blazor Server App",
+      "configurations": [".NET Server", "Blazor Server App"]
+    }
+  ]
+}
