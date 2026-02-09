@@ -1,0 +1,74 @@
+@inherits A2UIComponentBase
+@using System.Text.Json
+
+@{
+    // Read binding path raw (same pattern as A2UIList — don't use GetString which resolves bindings)
+    string? dataPath = Data.Properties?.TryGetValue("data", out var dataEl) == true
+        && dataEl.ValueKind == JsonValueKind.String
+        ? dataEl.GetString() : null;
+
+    var title = GetString("title");
+    var states = new List<(string Id, string Label, string Status)>();
+
+    if (dataPath is not null && SurfaceManager is not null)
+    {
+        var resolved = SurfaceManager.ResolveBinding(Surface.SurfaceId, dataPath);
+        if (resolved?.ValueKind == JsonValueKind.Object
+            && resolved.Value.TryGetProperty("states", out var statesEl)
+            && statesEl.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var s in statesEl.EnumerateArray())
+            {
+                var id = s.TryGetProperty("id", out var idEl) ? idEl.GetString() ?? "" : "";
+                var label = s.TryGetProperty("label", out var lbl) ? lbl.GetString() ?? "" : "";
+                var status = s.TryGetProperty("status", out var st) ? st.GetString() ?? "pending" : "pending";
+                states.Add((id, label, status));
+            }
+        }
+    }
+
+    // Layout constants
+    const int svgWidth = 800;
+    const int svgHeight = 140;
+    const int nodeRadius = 24;
+    const int nodeY = 50;
+    const int labelY = 100;
+    const int padding = 60;
+    double spacing = states.Count > 1 ? (svgWidth - 2.0 * padding) / (states.Count - 1) : 0;
+}
+
+<div class="a2ui-statemachine">
+    @if (!string.IsNullOrEmpty(title))
+    {
+        <div class="a2ui-statemachine-title">@title</div>
+    }
+    @if (states.Count > 0)
+    {
+        <svg viewBox="0 0 @svgWidth @svgHeight" class="a2ui-statemachine-svg" role="img" aria-label="@(title ?? "State machine")">
+            @for (int i = 0; i < states.Count - 1; i++)
+            {
+                var x1 = padding + i * spacing + nodeRadius;
+                var x2 = padding + (i + 1) * spacing - nodeRadius;
+                var edgeClass = states[i].Status == "completed" ? "a2ui-sm-edge-completed" : "a2ui-sm-edge-pending";
+                <line x1="@x1" y1="@nodeY" x2="@x2" y2="@nodeY" class="@edgeClass" />
+            }
+            @for (int i = 0; i < states.Count; i++)
+            {
+                var cx = padding + i * spacing;
+                var state = states[i];
+                <g class="a2ui-sm-node a2ui-sm-node-@state.Status">
+                    <circle cx="@cx" cy="@nodeY" r="@nodeRadius" />
+                    @if (state.Status == "completed")
+                    {
+                        @((MarkupString)$"<text x=\"{cx}\" y=\"{nodeY + 1}\" text-anchor=\"middle\" dominant-baseline=\"central\" class=\"a2ui-sm-check\">&#x2713;</text>")
+                    }
+                    @if (state.Status == "active")
+                    {
+                        <circle cx="@cx" cy="@nodeY" r="@nodeRadius" class="a2ui-sm-pulse" />
+                    }
+                    @((MarkupString)$"<text x=\"{cx}\" y=\"{labelY}\" text-anchor=\"middle\" class=\"a2ui-sm-label\">{System.Net.WebUtility.HtmlEncode(state.Label)}</text>")
+                </g>
+            }
+        </svg>
+    }
+</div>

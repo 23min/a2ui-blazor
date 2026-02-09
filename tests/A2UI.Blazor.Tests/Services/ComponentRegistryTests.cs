@@ -2,6 +2,7 @@ using A2UI.Blazor.Components.Display;
 using A2UI.Blazor.Components.Input;
 using A2UI.Blazor.Components.Layout;
 using A2UI.Blazor.Components.Media;
+using A2UI.Blazor.Components.Visualization;
 using A2UI.Blazor.Services;
 
 namespace A2UI.Blazor.Tests.Services;
@@ -34,6 +35,7 @@ public class ComponentRegistryTests
     [InlineData("Slider", typeof(A2UISlider))]
     [InlineData("Video", typeof(A2UIVideo))]
     [InlineData("AudioPlayer", typeof(A2UIAudioPlayer))]
+    [InlineData("StateMachine", typeof(A2UIStateMachine))]
     public void Resolve_StandardComponent_ReturnsCorrectType(string name, Type expected)
     {
         Assert.Equal(expected, _registry.Resolve(name));

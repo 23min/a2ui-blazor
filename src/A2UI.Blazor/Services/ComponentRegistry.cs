@@ -53,5 +53,8 @@ public sealed class ComponentRegistry
         // Media
         Register("Video", typeof(Components.Media.A2UIVideo));
         Register("AudioPlayer", typeof(Components.Media.A2UIAudioPlayer));
+
+        // Visualization
+        Register("StateMachine", typeof(Components.Visualization.A2UIStateMachine));
     }
 }

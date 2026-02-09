@@ -195,3 +195,76 @@ async def gallery_stream():
             yield ": keepalive\n\n"
 
     return StreamingResponse(generate(), media_type="text/event-stream")
+
+
+# ── Live State Machine ──────────────────────────────────────────────
+
+PIPELINE_STATES = [
+    {"id": "received",   "label": "Received"},
+    {"id": "validating", "label": "Validating"},
+    {"id": "processing", "label": "Processing"},
+    {"id": "billing",    "label": "Billing"},
+    {"id": "shipping",   "label": "Shipping"},
+    {"id": "delivered",  "label": "Delivered"},
+]
+
+
+@app.get("/agents/state-machine")
+async def state_machine_stream():
+    async def generate():
+        yield sse({"type": "createSurface", "surfaceId": "state-machine", "sendDataModel": True})
+
+        # Initial data model — all pending
+        initial_states = [{**s, "status": "pending"} for s in PIPELINE_STATES]
+        yield sse({"type": "updateDataModel", "surfaceId": "state-machine", "path": "/", "value": {
+            "pipeline": {
+                "title": "Order Processing Pipeline",
+                "states": initial_states,
+                "statusMessage": "Waiting to start...",
+            }
+        }})
+
+        # Component tree
+        yield sse(components_msg("state-machine", [
+            {"id": "root", "component": "Column", "children": ["header", "pipeline", "status-text"], "gap": "12"},
+            {"id": "header", "component": "Text", "text": "Live State Machine", "usageHint": "h2"},
+            {"id": "pipeline", "component": "StateMachine", "data": "/pipeline", "title": "/pipeline/title"},
+            {"id": "status-text", "component": "Text", "text": "/pipeline/statusMessage", "usageHint": "caption"},
+        ]))
+
+        # Auto-advance through states in a loop
+        while True:
+            for step in range(len(PIPELINE_STATES)):
+                await asyncio.sleep(2)
+                states = []
+                for i, s in enumerate(PIPELINE_STATES):
+                    if i < step:
+                        states.append({**s, "status": "completed"})
+                    elif i == step:
+                        states.append({**s, "status": "active"})
+                    else:
+                        states.append({**s, "status": "pending"})
+                msg = f"Step {step + 1}/{len(PIPELINE_STATES)}: {PIPELINE_STATES[step]['label']}"
+                yield sse({"type": "updateDataModel", "surfaceId": "state-machine", "path": "/pipeline", "value": {
+                    "title": "Order Processing Pipeline",
+                    "states": states,
+                    "statusMessage": msg,
+                }})
+
+            # All completed
+            await asyncio.sleep(2)
+            yield sse({"type": "updateDataModel", "surfaceId": "state-machine", "path": "/pipeline", "value": {
+                "title": "Order Processing Pipeline",
+                "states": [{**s, "status": "completed"} for s in PIPELINE_STATES],
+                "statusMessage": "All steps completed! Restarting in 3s...",
+            }})
+            await asyncio.sleep(3)
+
+            # Reset
+            yield sse({"type": "updateDataModel", "surfaceId": "state-machine", "path": "/pipeline", "value": {
+                "title": "Order Processing Pipeline",
+                "states": [{**s, "status": "pending"} for s in PIPELINE_STATES],
+                "statusMessage": "Pipeline reset. Starting...",
+            }})
+
+    return StreamingResponse(generate(), media_type="text/event-stream")

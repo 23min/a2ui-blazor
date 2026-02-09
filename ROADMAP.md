@@ -36,6 +36,7 @@ Make the library reliable enough for real applications.
 - [ ] **Multi-target .NET 8 + .NET 10** — `<TargetFrameworks>net8.0;net10.0</TargetFrameworks>` for both libraries; .NET 8 (LTS until Nov 2026) for existing enterprise consumers, .NET 10 (current LTS) for new projects
 - [ ] **NuGet packaging** — complete package metadata, CI build, publish `A2UI.Blazor` and `A2UI.Blazor.Server` to nuget.org
 - [ ] **GitHub Actions CI** — build, test, pack on every push; publish on tag
+- [ ] **Live State Machine demo** — SVG custom component showing real-time agent state transitions; proves the custom component + streaming story
 
 ## v0.3.0-preview — Accessibility & Theming
 

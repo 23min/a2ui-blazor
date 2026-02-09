@@ -271,3 +271,49 @@ textarea.a2ui-textfield-input {
 .a2ui-audio-player {
     width: 100%;
 }
+
+/* State Machine */
+.a2ui-statemachine {
+    padding: 1rem;
+}
+
+.a2ui-statemachine-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--a2ui-text);
+    margin-bottom: 0.75rem;
+}
+
+.a2ui-statemachine-svg {
+    width: 100%;
+    max-width: 800px;
+    height: auto;
+}
+
+.a2ui-sm-edge-pending { stroke: var(--a2ui-border); stroke-width: 2; }
+.a2ui-sm-edge-completed { stroke: #28a745; stroke-width: 2.5; }
+
+.a2ui-sm-node circle { stroke-width: 2; transition: fill 0.3s, stroke 0.3s; }
+.a2ui-sm-node-pending circle { fill: var(--a2ui-bg-surface); stroke: var(--a2ui-border); }
+.a2ui-sm-node-active circle { fill: var(--a2ui-primary); stroke: var(--a2ui-primary-hover); }
+.a2ui-sm-node-completed circle { fill: #28a745; stroke: #1e7e34; }
+
+.a2ui-sm-check { fill: white; font-size: 18px; font-weight: bold; }
+
+.a2ui-sm-pulse {
+    fill: none;
+    stroke: var(--a2ui-primary);
+    stroke-width: 2;
+    animation: a2ui-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes a2ui-pulse {
+    0% { r: 24; opacity: 1; }
+    100% { r: 36; opacity: 0; }
+}
+
+.a2ui-sm-label {
+    font-family: var(--a2ui-font);
+    font-size: 12px;
+    fill: var(--a2ui-text);
+}
