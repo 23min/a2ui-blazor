@@ -56,3 +56,6 @@ __pycache__/
 
 ## User secrets
 secrets.json
+
+## Claude Code
+.claude/

@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <SupportedPlatform Include="browser" />
+    <InternalsVisibleTo Include="A2UI.Blazor.Tests" />
   </ItemGroup>
 
   <ItemGroup>

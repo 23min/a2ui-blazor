@@ -4,7 +4,12 @@
 @inherits A2UIComponentBase
 
 @{
-    var dataPath = GetString("data");
+    // Read "data" as a raw path string — not via GetString() which would
+    // resolve "/path" as a data binding and replace it with the JSON content.
+    string? dataPath = Data.Properties?.TryGetValue("data", out var dataEl) == true
+        && dataEl.ValueKind == JsonValueKind.String
+        ? dataEl.GetString()
+        : null;
     var templateElement = GetElement("template");
     var templateComponentId = templateElement.HasValue
         && templateElement.Value.ValueKind == JsonValueKind.Object

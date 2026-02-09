@@ -53,7 +53,7 @@ async def restaurant_stream():
             {"id": "header", "component": "Text", "text": "Restaurant Finder", "usageHint": "h2"},
             {"id": "search-row", "component": "Row", "children": ["search-field", "search-btn"], "gap": "8", "alignment": "end"},
             {"id": "search-field", "component": "TextField", "placeholder": "Try 'Italian' or 'Sushi'...", "label": "Search by name or cuisine", "action": {"event": {"name": "search"}}},
-            {"id": "search-btn", "component": "Button", "label": "Search", "action": {"event": {"name": "search"}}},
+            {"id": "search-btn", "component": "Button", "label": "Search", "action": {"event": {"name": "search", "context": {"value": "/query"}}}},
             {"id": "divider1", "component": "Divider"},
             {"id": "results-list", "component": "List", "data": "/restaurants", "template": {"componentId": "restaurant-card"}},
             {"id": "restaurant-card", "component": "Card", "title": "name", "children": ["card-body"]},
@@ -81,6 +81,7 @@ async def restaurant_action(request: Request):
         filtered = ALL_RESTAURANTS
 
     async def generate():
+        yield sse({"type": "updateDataModel", "surfaceId": "restaurant-finder", "path": "/query", "value": query})
         yield sse({"type": "updateDataModel", "surfaceId": "restaurant-finder", "path": "/restaurants", "value": filtered})
 
     return StreamingResponse(generate(), media_type="text/event-stream")
@@ -92,13 +93,13 @@ async def restaurant_action(request: Request):
 async def contacts_stream():
     async def generate():
         yield sse({"type": "createSurface", "surfaceId": "contacts", "sendDataModel": True})
-        yield sse({"type": "updateDataModel", "surfaceId": "contacts", "path": "/", "value": {"contacts": ALL_CONTACTS}})
+        yield sse({"type": "updateDataModel", "surfaceId": "contacts", "path": "/", "value": {"query": "", "contacts": ALL_CONTACTS}})
         yield sse(components_msg("contacts", [
             {"id": "root", "component": "Column", "children": ["header", "search-row", "divider", "contact-list"], "gap": "12"},
             {"id": "header", "component": "Text", "text": "Contact Directory", "usageHint": "h2"},
             {"id": "search-row", "component": "Row", "children": ["search-input", "search-btn"], "gap": "8", "alignment": "end"},
             {"id": "search-input", "component": "TextField", "placeholder": "Try 'Engineering' or 'Alice'...", "label": "Search by name or department", "action": {"event": {"name": "search"}}},
-            {"id": "search-btn", "component": "Button", "label": "Search", "action": {"event": {"name": "search"}}},
+            {"id": "search-btn", "component": "Button", "label": "Search", "action": {"event": {"name": "search", "context": {"value": "/query"}}}},
             {"id": "divider", "component": "Divider"},
             {"id": "contact-list", "component": "List", "data": "/contacts", "template": {"componentId": "contact-row"}},
             {"id": "contact-row", "component": "Row", "children": ["contact-name", "contact-email", "contact-dept"], "distribution": "spaceBetween"},
@@ -124,6 +125,7 @@ async def contacts_action(request: Request):
         filtered = ALL_CONTACTS
 
     async def generate():
+        yield sse({"type": "updateDataModel", "surfaceId": "contacts", "path": "/query", "value": query})
         yield sse({"type": "updateDataModel", "surfaceId": "contacts", "path": "/contacts", "value": filtered})
 
     return StreamingResponse(generate(), media_type="text/event-stream")
@@ -136,22 +138,57 @@ async def gallery_stream():
     async def generate():
         yield sse({"type": "createSurface", "surfaceId": "gallery"})
         yield sse(components_msg("gallery", [
-            {"id": "root", "component": "Column", "children": ["title", "subtitle", "divider-top", "display-section", "divider1", "input-section"], "gap": "16"},
+            # Root layout
+            {"id": "root", "component": "Column", "children": [
+                "title", "subtitle", "divider-top",
+                "display-section", "divider1",
+                "layout-section", "divider2",
+                "input-section", "divider3",
+                "media-section",
+            ], "gap": "16"},
             {"id": "title", "component": "Text", "text": "A2UI Component Gallery", "usageHint": "h1"},
             {"id": "subtitle", "component": "Text", "text": "Served from Python, rendered in Blazor", "usageHint": "caption"},
             {"id": "divider-top", "component": "Divider"},
+
+            # ── Display Components ──────────────────────────────────────
             {"id": "display-section", "component": "Card", "title": "Display Components", "children": ["display-col"]},
-            {"id": "display-col", "component": "Column", "children": ["text-h2", "text-body", "icon1"], "gap": "8"},
+            {"id": "display-col", "component": "Column", "children": ["text-h2", "text-body", "icon1", "image1"], "gap": "8"},
             {"id": "text-h2", "component": "Text", "text": "Heading 2", "usageHint": "h2"},
             {"id": "text-body", "component": "Text", "text": "This text is coming from a Python FastAPI server.", "usageHint": "body"},
             {"id": "icon1", "component": "Icon", "icon": "★", "size": "32"},
+            {"id": "image1", "component": "Image", "src": "https://picsum.photos/seed/a2ui/600/200", "alt": "Sample landscape", "fit": "cover"},
             {"id": "divider1", "component": "Divider"},
+
+            # ── Layout Components ───────────────────────────────────────
+            {"id": "layout-section", "component": "Card", "title": "Layout Components", "children": ["layout-col"]},
+            {"id": "layout-col", "component": "Column", "children": ["tabs1"], "gap": "8"},
+            {"id": "tabs1", "component": "Tabs", "tabs": [
+                {"label": "Tab One", "contentId": "tab1-content"},
+                {"label": "Tab Two", "contentId": "tab2-content"},
+            ]},
+            {"id": "tab1-content", "component": "Text", "text": "Content of the first tab.", "usageHint": "body"},
+            {"id": "tab2-content", "component": "Text", "text": "Content of the second tab.", "usageHint": "body"},
+            {"id": "divider2", "component": "Divider"},
+
+            # ── Input Components ────────────────────────────────────────
             {"id": "input-section", "component": "Card", "title": "Input Components", "children": ["input-col"]},
-            {"id": "input-col", "component": "Column", "children": ["btn-primary", "textfield1", "checkbox1", "slider1"], "gap": "12"},
+            {"id": "input-col", "component": "Column", "children": [
+                "btn-primary", "textfield1", "checkbox1", "slider1",
+                "choicepicker1", "dateinput1",
+            ], "gap": "12"},
             {"id": "btn-primary", "component": "Button", "label": "Click Me", "variant": "primary"},
             {"id": "textfield1", "component": "TextField", "label": "Text Field", "placeholder": "Type here..."},
             {"id": "checkbox1", "component": "CheckBox", "label": "Check me"},
             {"id": "slider1", "component": "Slider", "label": "Volume", "min": 0, "max": 100, "step": 1, "value": 50},
+            {"id": "choicepicker1", "component": "ChoicePicker", "label": "Favorite color", "options": ["Red", "Green", "Blue", "Yellow"]},
+            {"id": "dateinput1", "component": "DateTimeInput", "label": "Pick a date", "inputType": "date"},
+            {"id": "divider3", "component": "Divider"},
+
+            # ── Media Components ────────────────────────────────────────
+            {"id": "media-section", "component": "Card", "title": "Media Components", "children": ["media-col"]},
+            {"id": "media-col", "component": "Column", "children": ["video1", "audio1"], "gap": "12"},
+            {"id": "video1", "component": "Video", "src": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm", "controls": True},
+            {"id": "audio1", "component": "AudioPlayer", "src": "https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3", "controls": True},
         ]))
         while True:
             await asyncio.sleep(30)
