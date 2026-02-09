@@ -256,7 +256,7 @@ tests/
 
 ## Project Status
 
-Under active development. Core renderer and server libraries are functional with all 16 standard components implemented. Four samples demonstrate the full matrix of server (Python, .NET) and client (WASM, Server) combinations.
+Under active development. Core renderer and server libraries are functional with all 17 standard components implemented. Four samples demonstrate the full matrix of server (Python, .NET) and client (WASM, Server) combinations. See the [Roadmap](ROADMAP.md) for what's next.
 
 ## References
 
