@@ -60,7 +60,7 @@ builder.Services.AddA2UIBlazor(registry =>
 ### Build
 
 ```bash
-git clone https://github.com/anthropics/a2ui-blazor.git
+git clone https://github.com/23min/a2ui-blazor.git
 cd a2ui-blazor
 dotnet build
 ```
@@ -248,6 +248,10 @@ samples/
   dotnet-server/                 # .NET Minimal API A2UI server
   blazor-wasm-spa/               # Standalone Blazor WebAssembly SPA
   blazor-server-app/             # Blazor Server app (enterprise SSR)
+
+tests/
+  A2UI.Blazor.Tests/             # bUnit component tests (115 tests)
+  A2UI.Blazor.Playwright/        # Playwright E2E browser tests (19 tests)
 ```
 
 ## Project Status
@@ -265,4 +269,4 @@ Under active development. Core renderer and server libraries are functional with
 
 ## License
 
-Apache 2.0
+MIT
