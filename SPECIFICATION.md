@@ -1,7 +1,7 @@
 # A2UI Specification Compliance
 
 **Current Target:** [A2UI v0.9](https://github.com/google/A2UI/tree/main/specification/v0_9)
-**Current State:** Partial — v0.9 message names, mixed v0.8/v0.9 property names
+**Current State:** Partial — v0.9 message names, v0.9 property names for implemented components
 **Implementation Version:** 0.2.0-preview
 **Last Updated:** 2026-02-10
 
@@ -98,7 +98,7 @@ Standard components from the A2UI catalog. Property names differ between spec ve
 
 | Component | Ours | v0.8 | v0.9 | v0.10 | Property Gaps |
 |-----------|------|------|------|-------|---------------|
-| `Text` | ⚠️ | ✅ | ⚠️ | same | **Gap:** We use `usageHint` (v0.8), v0.9 requires `variant` |
+| `Text` | ✅ | ✅ | ✅ | same | v0.9 compliant (`variant`) |
 | `Image` | ✅ | ✅ | ✅ | same | |
 | `Icon` | ✅ | ✅ | ✅ | same | |
 | `Divider` | ✅ | ✅ | ✅ | same | |
@@ -107,8 +107,8 @@ Standard components from the A2UI catalog. Property names differ between spec ve
 
 | Component | Ours | v0.8 | v0.9 | v0.10 | Property Gaps |
 |-----------|------|------|------|-------|---------------|
-| `Row` | ⚠️ | ✅ | ⚠️ | same | **Gap:** We use `distribution`/`alignment` (v0.8), v0.9 requires `justify`/`align` |
-| `Column` | ⚠️ | ✅ | ⚠️ | same | **Gap:** Same as Row |
+| `Row` | ✅ | ✅ | ✅ | same | v0.9 compliant (`justify`/`align`) |
+| `Column` | ✅ | ✅ | ✅ | same | v0.9 compliant (`align`) |
 | `Card` | ✅ | ✅ | ✅ | same | |
 | `List` | ✅ | ✅ | ✅ | same | |
 | `Tabs` | ✅ | ✅ | ✅ | same | |
@@ -133,7 +133,7 @@ Standard components from the A2UI catalog. Property names differ between spec ve
 | `AudioPlayer` | ✅ | ✅ | ✅ | same | |
 
 **Total:** 17/17 standard components implemented
-**v0.9 property compliance:** 10/17 compliant, 7 components have v0.8 property names (Text, Row, Column, Modal, TextField, ChoicePicker)
+**v0.9 property compliance:** 13/17 compliant, 4 components have v0.8 property names or gaps (Modal, TextField, ChoicePicker)
 
 ---
 
@@ -143,9 +143,9 @@ This table tracks which property names we use vs what each spec version expects.
 
 | Component | Property | Our Value | v0.9 Required | Status |
 |-----------|----------|-----------|---------------|--------|
-| `Text` | variant hint | `usageHint` | `variant` | ❌ Migrate |
-| `Row`/`Column` | horizontal distribution | `distribution` | `justify` | ❌ Migrate |
-| `Row`/`Column` | cross-axis alignment | `alignment` | `align` | ❌ Migrate |
+| `Text` | variant hint | `variant` | `variant` | ✅ Compliant |
+| `Row`/`Column` | horizontal distribution | `justify` | `justify` | ✅ Compliant |
+| `Row`/`Column` | cross-axis alignment | `align` | `align` | ✅ Compliant |
 | `Button` | style variant | `variant` | `variant` | ✅ Compliant |
 | `Slider` | range bounds | `min`/`max` | `min`/`max` | ✅ Compliant |
 | `Tabs` | tab list | `tabs` | `tabs` | ✅ Compliant |
@@ -194,9 +194,12 @@ This table tracks which property names we use vs what each spec version expects.
    - Add `metadata.a2uiClientCapabilities`
    - Declare supported catalog IDs
 
-2. **Property Name Migration to v0.9** (🚨 7 components non-compliant)
-   - Migrate all property names to v0.9: `usageHint` → `variant`, `distribution` → `justify`, `alignment` → `align`, `entryPointChild`/`contentChild` → `trigger`/`content`, `text` → `value`, `textFieldType` → `variant`, `selections` → `value`
-   - Affects: Text, Row, Column, Modal, TextField, ChoicePicker
+2. **Property Name Migration to v0.9** (⚠️ 4 components remaining)
+   - ✅ Done: `usageHint` → `variant`, `distribution` → `justify`, `alignment` → `align`
+   - Remaining gaps (not renames — features not yet implemented):
+     - Modal: `entryPointChild`/`contentChild` → `trigger`/`content`
+     - TextField: `textFieldType` → `variant`
+     - ChoicePicker: `selections` → `value`
 
 3. **Render Buffering** (🚨 Required — all versions)
    - Buffer messages until explicit render signal
@@ -235,7 +238,7 @@ This table tracks which property names we use vs what each spec version expects.
 | Python sample server | ✅ | All 4 demos working |
 | .NET sample server | ✅ | All 4 demos working |
 | Official A2UI reference agents | ❓ | Not tested |
-| v0.9 strict-mode server | ❓ | Not tested — property name mismatches may break |
+| v0.9 strict-mode server | ❓ | Not tested — remaining gaps (Modal, TextField, ChoicePicker) may break |
 
 ---
 

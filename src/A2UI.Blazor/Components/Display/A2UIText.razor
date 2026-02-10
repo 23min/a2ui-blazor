@@ -2,10 +2,10 @@
 
 @{
     var text = GetString("text") ?? "";
-    var usageHint = GetString("usageHint") ?? "body";
+    var variant = GetString("variant") ?? "body";
 }
 
-@switch (usageHint)
+@switch (variant)
 {
     case "h1":
         <h1 class="a2ui-text a2ui-text-h1">@text</h1>

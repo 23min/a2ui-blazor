@@ -4,10 +4,10 @@
     var src = GetString("src") ?? "";
     var alt = GetString("alt") ?? "";
     var fit = GetString("fit") ?? "cover";
-    var usageHint = GetString("usageHint");
+    var variant = GetString("variant");
 }
 
-<img class="a2ui-image @(usageHint is not null ? $"a2ui-image-{usageHint}" : "")"
+<img class="a2ui-image @(variant is not null ? $"a2ui-image-{variant}" : "")"
      src="@src"
      alt="@alt"
      style="object-fit: @fit;" />

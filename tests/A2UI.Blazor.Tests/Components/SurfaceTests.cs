@@ -37,7 +37,7 @@ public class SurfaceTests : IDisposable
             SurfaceTestContext.MakeComponent("root", "Text", new()
             {
                 ["text"] = "Hello from surface",
-                ["usageHint"] = "h2"
+                ["variant"] = "h2"
             })
         ]);
 
@@ -54,7 +54,7 @@ public class SurfaceTests : IDisposable
             [SurfaceTestContext.MakeComponent("root", "Text", new()
             {
                 ["text"] = "StaticText",
-                ["usageHint"] = "body"
+                ["variant"] = "body"
             })],
             new { message = "Initial" });
 
@@ -67,7 +67,7 @@ public class SurfaceTests : IDisposable
             SurfaceTestContext.MakeComponent("root", "Text", new()
             {
                 ["text"] = "UpdatedText",
-                ["usageHint"] = "body"
+                ["variant"] = "body"
             })
         ]);
 

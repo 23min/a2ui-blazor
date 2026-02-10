@@ -30,12 +30,12 @@ public class ColumnTests : IDisposable
     }
 
     [Fact]
-    public void Applies_AlignmentAndGap_Styles()
+    public void Applies_AlignAndGap_Styles()
     {
         var surface = _ctx.SetupSurface("s", [
             SurfaceTestContext.MakeComponent("col", "Column", new()
             {
-                ["alignment"] = "center",
+                ["align"] = "center",
                 ["gap"] = "24",
                 ["children"] = new[] { "t1" }
             }),

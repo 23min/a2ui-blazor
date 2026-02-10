@@ -25,7 +25,6 @@ public sealed class ComponentBuilder
 
     public ComponentBuilder Text(string text) => Set("text", text);
     public ComponentBuilder Label(string label) => Set("label", label);
-    public ComponentBuilder UsageHint(string hint) => Set("usageHint", hint);
     public ComponentBuilder Src(string src) => Set("src", src);
     public ComponentBuilder Alt(string alt) => Set("alt", alt);
     public ComponentBuilder Placeholder(string placeholder) => Set("placeholder", placeholder);
@@ -44,8 +43,8 @@ public sealed class ComponentBuilder
         return Set("action", action);
     }
 
-    public ComponentBuilder Distribution(string distribution) => Set("distribution", distribution);
-    public ComponentBuilder Alignment(string alignment) => Set("alignment", alignment);
+    public ComponentBuilder Justify(string justify) => Set("justify", justify);
+    public ComponentBuilder Align(string align) => Set("align", align);
     public ComponentBuilder Gap(string gap) => Set("gap", gap);
 
     public ComponentBuilder Min(double min) => Set("min", min);

@@ -50,17 +50,17 @@ async def restaurant_stream():
         yield sse({"type": "updateDataModel", "surfaceId": "restaurant-finder", "path": "/", "value": {"query": "", "restaurants": ALL_RESTAURANTS}})
         yield sse(components_msg("restaurant-finder", [
             {"id": "root", "component": "Column", "children": ["header", "search-row", "divider1", "results-list"]},
-            {"id": "header", "component": "Text", "text": "Restaurant Finder", "usageHint": "h2"},
-            {"id": "search-row", "component": "Row", "children": ["search-field", "search-btn"], "gap": "8", "alignment": "end"},
+            {"id": "header", "component": "Text", "text": "Restaurant Finder", "variant": "h2"},
+            {"id": "search-row", "component": "Row", "children": ["search-field", "search-btn"], "gap": "8", "align": "end"},
             {"id": "search-field", "component": "TextField", "placeholder": "Try 'Italian' or 'Sushi'...", "label": "Search by name or cuisine", "action": {"event": {"name": "search"}}},
             {"id": "search-btn", "component": "Button", "label": "Search", "action": {"event": {"name": "search", "context": {"value": "/query"}}}},
             {"id": "divider1", "component": "Divider"},
             {"id": "results-list", "component": "List", "data": "/restaurants", "template": {"componentId": "restaurant-card"}},
             {"id": "restaurant-card", "component": "Card", "title": "name", "children": ["card-body"]},
-            {"id": "card-body", "component": "Row", "children": ["card-cuisine", "card-rating", "card-price"], "distribution": "spaceBetween"},
-            {"id": "card-cuisine", "component": "Text", "text": "cuisine", "usageHint": "body"},
-            {"id": "card-rating", "component": "Text", "text": "rating", "usageHint": "caption"},
-            {"id": "card-price", "component": "Text", "text": "priceRange", "usageHint": "caption"},
+            {"id": "card-body", "component": "Row", "children": ["card-cuisine", "card-rating", "card-price"], "justify": "spaceBetween"},
+            {"id": "card-cuisine", "component": "Text", "text": "cuisine", "variant": "body"},
+            {"id": "card-rating", "component": "Text", "text": "rating", "variant": "caption"},
+            {"id": "card-price", "component": "Text", "text": "priceRange", "variant": "caption"},
         ]))
         # Keep alive
         while True:
@@ -96,16 +96,16 @@ async def contacts_stream():
         yield sse({"type": "updateDataModel", "surfaceId": "contacts", "path": "/", "value": {"query": "", "contacts": ALL_CONTACTS}})
         yield sse(components_msg("contacts", [
             {"id": "root", "component": "Column", "children": ["header", "search-row", "divider", "contact-list"], "gap": "12"},
-            {"id": "header", "component": "Text", "text": "Contact Directory", "usageHint": "h2"},
-            {"id": "search-row", "component": "Row", "children": ["search-input", "search-btn"], "gap": "8", "alignment": "end"},
+            {"id": "header", "component": "Text", "text": "Contact Directory", "variant": "h2"},
+            {"id": "search-row", "component": "Row", "children": ["search-input", "search-btn"], "gap": "8", "align": "end"},
             {"id": "search-input", "component": "TextField", "placeholder": "Try 'Engineering' or 'Alice'...", "label": "Search by name or department", "action": {"event": {"name": "search"}}},
             {"id": "search-btn", "component": "Button", "label": "Search", "action": {"event": {"name": "search", "context": {"value": "/query"}}}},
             {"id": "divider", "component": "Divider"},
             {"id": "contact-list", "component": "List", "data": "/contacts", "template": {"componentId": "contact-row"}},
-            {"id": "contact-row", "component": "Row", "children": ["contact-name", "contact-email", "contact-dept"], "distribution": "spaceBetween"},
-            {"id": "contact-name", "component": "Text", "text": "name", "usageHint": "body"},
-            {"id": "contact-email", "component": "Text", "text": "email", "usageHint": "caption"},
-            {"id": "contact-dept", "component": "Text", "text": "department", "usageHint": "caption"},
+            {"id": "contact-row", "component": "Row", "children": ["contact-name", "contact-email", "contact-dept"], "justify": "spaceBetween"},
+            {"id": "contact-name", "component": "Text", "text": "name", "variant": "body"},
+            {"id": "contact-email", "component": "Text", "text": "email", "variant": "caption"},
+            {"id": "contact-dept", "component": "Text", "text": "department", "variant": "caption"},
         ]))
         while True:
             await asyncio.sleep(30)
@@ -146,15 +146,15 @@ async def gallery_stream():
                 "input-section", "divider3",
                 "media-section",
             ], "gap": "16"},
-            {"id": "title", "component": "Text", "text": "A2UI Component Gallery", "usageHint": "h1"},
-            {"id": "subtitle", "component": "Text", "text": "Served from Python, rendered in Blazor", "usageHint": "caption"},
+            {"id": "title", "component": "Text", "text": "A2UI Component Gallery", "variant": "h1"},
+            {"id": "subtitle", "component": "Text", "text": "Served from Python, rendered in Blazor", "variant": "caption"},
             {"id": "divider-top", "component": "Divider"},
 
             # ── Display Components ──────────────────────────────────────
             {"id": "display-section", "component": "Card", "title": "Display Components", "children": ["display-col"]},
             {"id": "display-col", "component": "Column", "children": ["text-h2", "text-body", "icon1", "image1"], "gap": "8"},
-            {"id": "text-h2", "component": "Text", "text": "Heading 2", "usageHint": "h2"},
-            {"id": "text-body", "component": "Text", "text": "This text is coming from a Python FastAPI server.", "usageHint": "body"},
+            {"id": "text-h2", "component": "Text", "text": "Heading 2", "variant": "h2"},
+            {"id": "text-body", "component": "Text", "text": "This text is coming from a Python FastAPI server.", "variant": "body"},
             {"id": "icon1", "component": "Icon", "icon": "★", "size": "32"},
             {"id": "image1", "component": "Image", "src": "https://picsum.photos/seed/a2ui/600/200", "alt": "Sample landscape", "fit": "cover"},
             {"id": "divider1", "component": "Divider"},
@@ -166,8 +166,8 @@ async def gallery_stream():
                 {"label": "Tab One", "contentId": "tab1-content"},
                 {"label": "Tab Two", "contentId": "tab2-content"},
             ]},
-            {"id": "tab1-content", "component": "Text", "text": "Content of the first tab.", "usageHint": "body"},
-            {"id": "tab2-content", "component": "Text", "text": "Content of the second tab.", "usageHint": "body"},
+            {"id": "tab1-content", "component": "Text", "text": "Content of the first tab.", "variant": "body"},
+            {"id": "tab2-content", "component": "Text", "text": "Content of the second tab.", "variant": "body"},
             {"id": "divider2", "component": "Divider"},
 
             # ── Input Components ────────────────────────────────────────
@@ -227,9 +227,9 @@ async def state_machine_stream():
         # Component tree
         yield sse(components_msg("state-machine", [
             {"id": "root", "component": "Column", "children": ["header", "pipeline", "status-text"], "gap": "12"},
-            {"id": "header", "component": "Text", "text": "Live State Machine", "usageHint": "h2"},
+            {"id": "header", "component": "Text", "text": "Live State Machine", "variant": "h2"},
             {"id": "pipeline", "component": "StateMachine", "data": "/pipeline", "title": "/pipeline/title"},
-            {"id": "status-text", "component": "Text", "text": "/pipeline/statusMessage", "usageHint": "caption"},
+            {"id": "status-text", "component": "Text", "text": "/pipeline/statusMessage", "variant": "caption"},
         ]))
 
         # Auto-advance through states in a loop

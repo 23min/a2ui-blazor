@@ -2,13 +2,13 @@
 @inherits A2UIComponentBase
 
 @{
-    var distribution = GetString("distribution") ?? "start";
-    var alignment = GetString("alignment") ?? "center";
+    var justify = GetString("justify") ?? "start";
+    var align = GetString("align") ?? "center";
     var gap = GetString("gap") ?? "8";
     var childIds = GetChildIds();
 }
 
-<div class="a2ui-row" style="justify-content: @MapDistribution(distribution); align-items: @MapAlignment(alignment); gap: @(gap)px;">
+<div class="a2ui-row" style="justify-content: @MapJustify(justify); align-items: @MapAlign(align); gap: @(gap)px;">
     @foreach (var childId in childIds)
     {
         if (Surface.Components.TryGetValue(childId, out var child))
@@ -22,7 +22,7 @@
     [Parameter]
     public EventCallback<A2UIUserAction> OnAction { get; set; }
 
-    private static string MapDistribution(string distribution) => distribution switch
+    private static string MapJustify(string justify) => justify switch
     {
         "start" => "flex-start",
         "center" => "center",
@@ -33,7 +33,7 @@
         _ => "flex-start"
     };
 
-    private static string MapAlignment(string alignment) => alignment switch
+    private static string MapAlign(string align) => align switch
     {
         "start" => "flex-start",
         "center" => "center",

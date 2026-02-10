@@ -30,13 +30,13 @@ public class RowTests : IDisposable
     }
 
     [Fact]
-    public void Applies_DistributionAlignmentGap_Styles()
+    public void Applies_JustifyAlignGap_Styles()
     {
         var surface = _ctx.SetupSurface("s", [
             SurfaceTestContext.MakeComponent("row", "Row", new()
             {
-                ["distribution"] = "spaceBetween",
-                ["alignment"] = "end",
+                ["justify"] = "spaceBetween",
+                ["align"] = "end",
                 ["gap"] = "16",
                 ["children"] = new[] { "t1" }
             }),

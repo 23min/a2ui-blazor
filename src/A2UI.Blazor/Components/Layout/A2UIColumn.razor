@@ -2,12 +2,12 @@
 @inherits A2UIComponentBase
 
 @{
-    var alignment = GetString("alignment") ?? "stretch";
+    var align = GetString("align") ?? "stretch";
     var gap = GetString("gap") ?? "8";
     var childIds = GetChildIds();
 }
 
-<div class="a2ui-column" style="align-items: @MapAlignment(alignment); gap: @(gap)px;">
+<div class="a2ui-column" style="align-items: @MapAlign(align); gap: @(gap)px;">
     @foreach (var childId in childIds)
     {
         if (Surface.Components.TryGetValue(childId, out var child))
@@ -21,7 +21,7 @@
     [Parameter]
     public EventCallback<A2UIUserAction> OnAction { get; set; }
 
-    private static string MapAlignment(string alignment) => alignment switch
+    private static string MapAlign(string align) => align switch
     {
         "start" => "flex-start",
         "center" => "center",
