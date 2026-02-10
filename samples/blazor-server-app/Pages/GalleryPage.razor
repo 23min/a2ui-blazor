@@ -3,7 +3,7 @@
 
 <h2>Component Gallery</h2>
 
-<A2UISurface SurfaceId="gallery" OnAction="HandleAction" />
+<A2UISurface SurfaceId="gallery" OnAction="HandleAction" ConnectionState="Client.State" />
 
 @if (_error is not null)
 {
@@ -17,6 +17,7 @@
 
     protected override Task OnInitializedAsync()
     {
+        Client.OnStateChanged += HandleStateChanged;
         _ = ConnectInBackground();
         return Task.CompletedTask;
     }
@@ -34,7 +35,13 @@
         }
     }
 
+    private void HandleStateChanged(StreamConnectionState _) => InvokeAsync(StateHasChanged);
+
     private Task HandleAction(A2UIUserAction action) => Task.CompletedTask;
 
-    public void Dispose() => Client?.Dispose();
+    public void Dispose()
+    {
+        Client.OnStateChanged -= HandleStateChanged;
+        Client.Dispose();
+    }
 }

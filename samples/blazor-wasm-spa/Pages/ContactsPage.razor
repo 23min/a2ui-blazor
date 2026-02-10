@@ -1,7 +1,7 @@
 @page "/contacts"
 @implements IDisposable
 
-<A2UISurface SurfaceId="contacts" OnAction="HandleAction" />
+<A2UISurface SurfaceId="contacts" OnAction="HandleAction" ConnectionState="Client.State" />
 
 @if (_error is not null)
 {
@@ -15,6 +15,7 @@
 
     protected override Task OnInitializedAsync()
     {
+        Client.OnStateChanged += HandleStateChanged;
         _ = ConnectInBackground();
         return Task.CompletedTask;
     }
@@ -32,10 +33,16 @@
         }
     }
 
+    private void HandleStateChanged(StreamConnectionState _) => InvokeAsync(StateHasChanged);
+
     private async Task HandleAction(A2UIUserAction action)
     {
         await Client.SendActionAsync("/agents/contacts", action);
     }
 
-    public void Dispose() => Client?.Dispose();
+    public void Dispose()
+    {
+        Client.OnStateChanged -= HandleStateChanged;
+        Client.Dispose();
+    }
 }

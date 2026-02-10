@@ -12,6 +12,10 @@
         {
             <div class="a2ui-surface-loading">Connecting...</div>
         }
+        @if (ConnectionState == StreamConnectionState.Reconnecting)
+        {
+            <div class="a2ui-surface-reconnecting">Reconnecting...</div>
+        }
     </div>
 </CascadingValue>
 
@@ -21,6 +25,9 @@
 
     [Parameter]
     public EventCallback<A2UIUserAction> OnAction { get; set; }
+
+    [Parameter]
+    public StreamConnectionState? ConnectionState { get; set; }
 
     [Inject]
     private SurfaceManager SurfaceManagerService { get; set; } = default!;

@@ -3,7 +3,7 @@
 
 <h2>Restaurant Finder</h2>
 
-<A2UISurface SurfaceId="restaurant-finder" OnAction="HandleAction" />
+<A2UISurface SurfaceId="restaurant-finder" OnAction="HandleAction" ConnectionState="Client.State" />
 
 @if (_error is not null)
 {
@@ -17,6 +17,7 @@
 
     protected override Task OnInitializedAsync()
     {
+        Client.OnStateChanged += HandleStateChanged;
         _ = ConnectInBackground();
         return Task.CompletedTask;
     }
@@ -34,10 +35,16 @@
         }
     }
 
+    private void HandleStateChanged(StreamConnectionState _) => InvokeAsync(StateHasChanged);
+
     private async Task HandleAction(A2UIUserAction action)
     {
         await Client.SendActionAsync("/agents/restaurant", action);
     }
 
-    public void Dispose() => Client?.Dispose();
+    public void Dispose()
+    {
+        Client.OnStateChanged -= HandleStateChanged;
+        Client.Dispose();
+    }
 }
