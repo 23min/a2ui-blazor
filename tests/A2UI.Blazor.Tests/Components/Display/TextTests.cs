@@ -13,13 +13,13 @@ public class TextTests : IDisposable
     [InlineData("h3", "h3")]
     [InlineData("h4", "h4")]
     [InlineData("h5", "h5")]
-    public void Renders_HeadingElement_ForUsageHint(string usageHint, string expectedTag)
+    public void Renders_HeadingElement_ForVariant(string variant, string expectedTag)
     {
         var surface = _ctx.SetupSurface("s", [
             SurfaceTestContext.MakeComponent("root", "Text", new()
             {
                 ["text"] = "Hello",
-                ["usageHint"] = usageHint
+                ["variant"] = variant
             })
         ]);
 
@@ -27,17 +27,17 @@ public class TextTests : IDisposable
             .Add(c => c.Data, surface.Components["root"])
             .Add(c => c.Surface, surface));
 
-        cut.Find(expectedTag).MarkupMatches($"<{expectedTag} class=\"a2ui-text a2ui-text-{usageHint}\" >Hello</{expectedTag}>");
+        cut.Find(expectedTag).MarkupMatches($"<{expectedTag} class=\"a2ui-text a2ui-text-{variant}\" >Hello</{expectedTag}>");
     }
 
     [Fact]
-    public void Renders_Paragraph_ForBodyUsageHint()
+    public void Renders_Paragraph_ForBodyVariant()
     {
         var surface = _ctx.SetupSurface("s", [
             SurfaceTestContext.MakeComponent("root", "Text", new()
             {
                 ["text"] = "Body text",
-                ["usageHint"] = "body"
+                ["variant"] = "body"
             })
         ]);
 
@@ -50,7 +50,7 @@ public class TextTests : IDisposable
     }
 
     [Fact]
-    public void Renders_Paragraph_WhenNoUsageHint()
+    public void Renders_Paragraph_WhenNoVariant()
     {
         var surface = _ctx.SetupSurface("s", [
             SurfaceTestContext.MakeComponent("root", "Text", new()
@@ -68,13 +68,13 @@ public class TextTests : IDisposable
     }
 
     [Fact]
-    public void Renders_Span_ForCaptionUsageHint()
+    public void Renders_Span_ForCaptionVariant()
     {
         var surface = _ctx.SetupSurface("s", [
             SurfaceTestContext.MakeComponent("root", "Text", new()
             {
                 ["text"] = "Caption",
-                ["usageHint"] = "caption"
+                ["variant"] = "caption"
             })
         ]);
 

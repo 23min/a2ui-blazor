@@ -45,7 +45,7 @@ public sealed class StateMachineAgent : IA2UIAgent
 
             new ComponentBuilder("header", "Text")
                 .Text("Live State Machine")
-                .UsageHint("h2")
+                .Variant("h2")
                 .Build(),
 
             new ComponentBuilder("pipeline", "StateMachine")
@@ -55,7 +55,7 @@ public sealed class StateMachineAgent : IA2UIAgent
 
             new ComponentBuilder("status-text", "Text")
                 .Text("/pipeline/statusMessage")
-                .UsageHint("caption")
+                .Variant("caption")
                 .Build()
         };
 

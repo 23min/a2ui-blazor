@@ -26,16 +26,16 @@ public sealed class ContactLookupAgent : IA2UIAgent
         var components = new List<Dictionary<string, object>>();
 
         components.Add(new ComponentBuilder("root", "Column").Children("header", "search-row", "divider", "contact-list").Gap("12").Build());
-        components.Add(new ComponentBuilder("header", "Text").Text("Contact Directory").UsageHint("h2").Build());
-        components.Add(new ComponentBuilder("search-row", "Row").Children("search-input", "search-btn").Gap("8").Alignment("end").Build());
+        components.Add(new ComponentBuilder("header", "Text").Text("Contact Directory").Variant("h2").Build());
+        components.Add(new ComponentBuilder("search-row", "Row").Children("search-input", "search-btn").Gap("8").Align("end").Build());
         components.Add(new ComponentBuilder("search-input", "TextField").Placeholder("Search contacts...").Label("Search").Action("search").Build());
         components.Add(new ComponentBuilder("search-btn", "Button").Label("Search").Action("search").Build());
         components.Add(new ComponentBuilder("divider", "Divider").Build());
         components.Add(new ComponentBuilder("contact-list", "List").Data("/contacts").Template("contact-row").Build());
-        components.Add(new ComponentBuilder("contact-row", "Row").Children("contact-name", "contact-email", "contact-dept").Distribution("spaceBetween").Build());
-        components.Add(new ComponentBuilder("contact-name", "Text").Text("name").UsageHint("body").Build());
-        components.Add(new ComponentBuilder("contact-email", "Text").Text("email").UsageHint("caption").Build());
-        components.Add(new ComponentBuilder("contact-dept", "Text").Text("department").UsageHint("caption").Build());
+        components.Add(new ComponentBuilder("contact-row", "Row").Children("contact-name", "contact-email", "contact-dept").Justify("spaceBetween").Build());
+        components.Add(new ComponentBuilder("contact-name", "Text").Text("name").Variant("body").Build());
+        components.Add(new ComponentBuilder("contact-email", "Text").Text("email").Variant("caption").Build());
+        components.Add(new ComponentBuilder("contact-dept", "Text").Text("department").Variant("caption").Build());
 
         await writer.WriteUpdateComponentsAsync("contacts", components);
 

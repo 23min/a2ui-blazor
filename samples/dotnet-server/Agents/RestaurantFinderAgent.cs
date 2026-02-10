@@ -27,17 +27,17 @@ public sealed class RestaurantFinderAgent : IA2UIAgent
         var components = new List<Dictionary<string, object>>();
 
         components.Add(new ComponentBuilder("root", "Column").Children("header", "search-row", "divider1", "results-list").Build());
-        components.Add(new ComponentBuilder("header", "Text").Text("Restaurant Finder").UsageHint("h2").Build());
-        components.Add(new ComponentBuilder("search-row", "Row").Children("search-field", "search-btn").Gap("8").Alignment("end").Build());
+        components.Add(new ComponentBuilder("header", "Text").Text("Restaurant Finder").Variant("h2").Build());
+        components.Add(new ComponentBuilder("search-row", "Row").Children("search-field", "search-btn").Gap("8").Align("end").Build());
         components.Add(new ComponentBuilder("search-field", "TextField").Placeholder("Search restaurants...").Label("Search").Action("search").Build());
         components.Add(new ComponentBuilder("search-btn", "Button").Label("Search").Action("search").Build());
         components.Add(new ComponentBuilder("divider1", "Divider").Build());
         components.Add(new ComponentBuilder("results-list", "List").Data("/restaurants").Template("restaurant-card").Build());
         components.Add(new ComponentBuilder("restaurant-card", "Card").Title("name").Children("card-body").Build());
-        components.Add(new ComponentBuilder("card-body", "Row").Children("card-cuisine", "card-rating", "card-price").Distribution("spaceBetween").Build());
-        components.Add(new ComponentBuilder("card-cuisine", "Text").Text("cuisine").UsageHint("body").Build());
-        components.Add(new ComponentBuilder("card-rating", "Text").Text("rating").UsageHint("caption").Build());
-        components.Add(new ComponentBuilder("card-price", "Text").Text("priceRange").UsageHint("caption").Build());
+        components.Add(new ComponentBuilder("card-body", "Row").Children("card-cuisine", "card-rating", "card-price").Justify("spaceBetween").Build());
+        components.Add(new ComponentBuilder("card-cuisine", "Text").Text("cuisine").Variant("body").Build());
+        components.Add(new ComponentBuilder("card-rating", "Text").Text("rating").Variant("caption").Build());
+        components.Add(new ComponentBuilder("card-price", "Text").Text("priceRange").Variant("caption").Build());
 
         await writer.WriteUpdateComponentsAsync("restaurant-finder", components);
 

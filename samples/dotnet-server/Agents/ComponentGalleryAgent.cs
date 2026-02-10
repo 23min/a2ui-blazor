@@ -18,17 +18,17 @@ public sealed class ComponentGalleryAgent : IA2UIAgent
             .Children("title", "subtitle", "divider-top", "display-section", "divider1", "input-section", "divider2", "layout-section")
             .Gap("16").Build());
 
-        components.Add(new ComponentBuilder("title", "Text").Text("A2UI Component Gallery").UsageHint("h1").Build());
-        components.Add(new ComponentBuilder("subtitle", "Text").Text("All standard A2UI components rendered with Blazor").UsageHint("caption").Build());
+        components.Add(new ComponentBuilder("title", "Text").Text("A2UI Component Gallery").Variant("h1").Build());
+        components.Add(new ComponentBuilder("subtitle", "Text").Text("All standard A2UI components rendered with Blazor").Variant("caption").Build());
         components.Add(new ComponentBuilder("divider-top", "Divider").Build());
 
         // Display section
         components.Add(new ComponentBuilder("display-section", "Card").Title("Display Components").Children("display-col").Build());
         components.Add(new ComponentBuilder("display-col", "Column").Children("text-h1", "text-h2", "text-body", "text-caption", "icon1", "divider-sample").Gap("8").Build());
-        components.Add(new ComponentBuilder("text-h1", "Text").Text("Heading 1").UsageHint("h1").Build());
-        components.Add(new ComponentBuilder("text-h2", "Text").Text("Heading 2").UsageHint("h2").Build());
-        components.Add(new ComponentBuilder("text-body", "Text").Text("This is body text demonstrating the Text component.").UsageHint("body").Build());
-        components.Add(new ComponentBuilder("text-caption", "Text").Text("This is a caption").UsageHint("caption").Build());
+        components.Add(new ComponentBuilder("text-h1", "Text").Text("Heading 1").Variant("h1").Build());
+        components.Add(new ComponentBuilder("text-h2", "Text").Text("Heading 2").Variant("h2").Build());
+        components.Add(new ComponentBuilder("text-body", "Text").Text("This is body text demonstrating the Text component.").Variant("body").Build());
+        components.Add(new ComponentBuilder("text-caption", "Text").Text("This is a caption").Variant("caption").Build());
         components.Add(new ComponentBuilder("icon1", "Icon").Set("icon", "★").Set("size", "32").Build());
         components.Add(new ComponentBuilder("divider-sample", "Divider").Build());
 
@@ -48,7 +48,7 @@ public sealed class ComponentGalleryAgent : IA2UIAgent
         // Layout section
         components.Add(new ComponentBuilder("layout-section", "Card").Title("Layout Components").Children("layout-col").Build());
         components.Add(new ComponentBuilder("layout-col", "Column").Children("row-demo", "tabs-demo").Gap("12").Build());
-        components.Add(new ComponentBuilder("row-demo", "Row").Children("row-item1", "row-item2", "row-item3").Distribution("spaceEvenly").Build());
+        components.Add(new ComponentBuilder("row-demo", "Row").Children("row-item1", "row-item2", "row-item3").Justify("spaceEvenly").Build());
         components.Add(new ComponentBuilder("row-item1", "Text").Text("Row Item 1").Build());
         components.Add(new ComponentBuilder("row-item2", "Text").Text("Row Item 2").Build());
         components.Add(new ComponentBuilder("row-item3", "Text").Text("Row Item 3").Build());
