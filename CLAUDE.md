@@ -71,8 +71,8 @@ The Blazor WASM SPA (`samples/blazor-wasm-spa`) and Blazor Server App (`samples/
 ### Branching
 
 - `main` is the primary branch
-- Work on feature branches (`feature/*`) or dev branches (`dev/*`)
-- PRs to main
+- Code changes go through feature branches (`feature/*`) or dev branches (`dev/*`) with PRs to main
+- Doc-only changes (ROADMAP, SPECIFICATION, README) can go directly to `main`
 
 ### Commits
 

@@ -33,12 +33,30 @@ Make the library reliable enough for real applications.
 - [x] **Reconnecting UI** — visual overlay ("Reconnecting...") during stream recovery
 - [x] **Error handling** — structured error boundaries around component rendering, stream parsing, and action dispatch
 - [x] **Logging** — `ILogger<T>` integration throughout core services for diagnostics
-- [ ] **Multi-target .NET 8 + .NET 10** — `<TargetFrameworks>net8.0;net10.0</TargetFrameworks>` for both libraries; .NET 8 (LTS until Nov 2026) for existing enterprise consumers, .NET 10 (current LTS) for new projects
+- [ ] **Migrate to .NET 10** — target `net10.0` across all projects (#10); .NET 10 is current LTS
 - [ ] **NuGet packaging** — complete package metadata, CI build, publish `A2UI.Blazor` and `A2UI.Blazor.Server` to nuget.org
 - [ ] **GitHub Actions CI** — build, test, pack on every push; publish on tag
 - [x] **Live State Machine demo** — SVG custom component showing real-time agent state transitions; proves the custom component + streaming story
 
-## v0.3.0-preview — Accessibility & Theming
+## v0.3.0-preview — A2UI v0.9 Spec Compliance
+
+**Status: planned**
+
+Close the gaps between our implementation and the A2UI v0.9 specification. See [SPECIFICATION.md](SPECIFICATION.md) for the full compliance matrix.
+
+### High Priority
+
+- [ ] **A2A message envelope + client capabilities** — wrap `userAction` in A2A message structure, declare `a2uiClientCapabilities` with supported catalog IDs (#4)
+- [ ] **Property name migration to v0.9** — migrate 7 components from v0.8 names: `usageHint` → `variant`, `distribution` → `justify`, `alignment` → `align`, `entryPointChild`/`contentChild` → `trigger`/`content`, `text` → `value`, `textFieldType` → `variant`, `selections` → `value` (#5)
+- [ ] **Render buffering** — buffer messages until explicit render signal instead of rendering immediately on `createSurface` (#6)
+
+### Medium Priority
+
+- [ ] **`formatString` interpolation** — support `${expression}` syntax in bound values (#7)
+- [ ] **`sendDataModel` sync + catalog & theme support** — echo data model when `sendDataModel: true`, parse `catalogId` and `theme` from `createSurface` (#8)
+- [ ] **Client error reporting** — send client-side errors to server via `error` message type (#9)
+
+## v0.4.0-preview — Accessibility & Theming
 
 **Status: planned**
 
@@ -50,9 +68,8 @@ Meet WCAG 2.1 AA and support visual customization.
 - [ ] **Dark mode** — `prefers-color-scheme` media query with automatic light/dark switching
 - [ ] **CSS custom property theming** — document how consumers can override `--a2ui-*` variables
 - [ ] **`prefers-reduced-motion`** — respect user motion preferences for transitions
-- [ ] **Protocol theme support** — wire the `theme` field from `createSurface` to CSS variable injection
 
-## v0.4.0-preview — Advanced Protocol Features
+## v0.5.0-preview — Advanced Protocol Features
 
 **Status: planned**
 
