@@ -1,9 +1,12 @@
 using A2UI.Blazor.Protocol;
-using A2UI.Blazor.Services;
 using System.Net.Http.Json;
 
-namespace blazor_server_app.Services;
+namespace A2UI.Blazor.Services;
 
+/// <summary>
+/// Connects to an A2UI agent endpoint, reads the JSONL/SSE stream,
+/// and dispatches messages to the SurfaceManager.
+/// </summary>
 public sealed class A2UIStreamClient : IDisposable
 {
     private readonly HttpClient _http;
@@ -24,6 +27,7 @@ public sealed class A2UIStreamClient : IDisposable
         _cts = new CancellationTokenSource();
 
         var request = new HttpRequestMessage(HttpMethod.Get, agentPath);
+        EnableBrowserStreaming(request);
         var response = await _http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, _cts.Token);
         response.EnsureSuccessStatusCode();
 
@@ -39,6 +43,7 @@ public sealed class A2UIStreamClient : IDisposable
     {
         var request = new HttpRequestMessage(HttpMethod.Post, agentPath);
         request.Content = JsonContent.Create(action);
+        EnableBrowserStreaming(request);
 
         var response = await _http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
         response.EnsureSuccessStatusCode();
@@ -50,9 +55,20 @@ public sealed class A2UIStreamClient : IDisposable
         }
     }
 
+    public void Disconnect()
+    {
+        _cts?.Cancel();
+    }
+
     public void Dispose()
     {
         _cts?.Cancel();
         _cts?.Dispose();
+    }
+
+    private static void EnableBrowserStreaming(HttpRequestMessage request)
+    {
+        if (OperatingSystem.IsBrowser())
+            request.Options.Set(new HttpRequestOptionsKey<bool>("WebAssemblyEnableStreamingResponse"), true);
     }
 }

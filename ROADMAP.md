@@ -28,7 +28,7 @@ The core protocol implementation and component catalog.
 
 Make the library reliable enough for real applications.
 
-- [ ] **`A2UIStreamClient` in core library** — promote from samples into `A2UI.Blazor` so consumers don't have to write their own SSE client
+- [x] **`A2UIStreamClient` in core library** — promote from samples into `A2UI.Blazor` so consumers don't have to write their own SSE client
 - [ ] **Connection resilience** — automatic reconnection with exponential backoff when SSE streams drop
 - [ ] **Reconnecting UI** — visual overlay ("Reconnecting...") during stream recovery
 - [ ] **Error handling** — structured error boundaries around component rendering, stream parsing, and action dispatch
@@ -36,7 +36,7 @@ Make the library reliable enough for real applications.
 - [ ] **Multi-target .NET 8 + .NET 10** — `<TargetFrameworks>net8.0;net10.0</TargetFrameworks>` for both libraries; .NET 8 (LTS until Nov 2026) for existing enterprise consumers, .NET 10 (current LTS) for new projects
 - [ ] **NuGet packaging** — complete package metadata, CI build, publish `A2UI.Blazor` and `A2UI.Blazor.Server` to nuget.org
 - [ ] **GitHub Actions CI** — build, test, pack on every push; publish on tag
-- [ ] **Live State Machine demo** — SVG custom component showing real-time agent state transitions; proves the custom component + streaming story
+- [x] **Live State Machine demo** — SVG custom component showing real-time agent state transitions; proves the custom component + streaming story
 
 ## v0.3.0-preview — Accessibility & Theming
 

@@ -1,5 +1,4 @@
 @page "/contacts"
-@using blazor_server_app.Services
 @implements IDisposable
 
 <h2>Contact Directory</h2>
@@ -12,16 +11,12 @@
 }
 
 @code {
-    [Inject] private HttpClient Http { get; set; } = default!;
-    [Inject] private JsonlStreamReader Reader { get; set; } = default!;
-    [Inject] private MessageDispatcher Dispatcher { get; set; } = default!;
+    [Inject] private A2UIStreamClient Client { get; set; } = default!;
 
-    private A2UIStreamClient? _client;
     private string? _error;
 
     protected override Task OnInitializedAsync()
     {
-        _client = new A2UIStreamClient(Http, Reader, Dispatcher);
         _ = ConnectInBackground();
         return Task.CompletedTask;
     }
@@ -30,7 +25,7 @@
     {
         try
         {
-            await _client!.ConnectAsync("/agents/contacts");
+            await Client.ConnectAsync("/agents/contacts");
         }
         catch (Exception ex)
         {
@@ -41,9 +36,8 @@
 
     private async Task HandleAction(A2UIUserAction action)
     {
-        if (_client is not null)
-            await _client.SendActionAsync("/agents/contacts", action);
+        await Client.SendActionAsync("/agents/contacts", action);
     }
 
-    public void Dispose() => _client?.Dispose();
+    public void Dispose() => Client?.Dispose();
 }

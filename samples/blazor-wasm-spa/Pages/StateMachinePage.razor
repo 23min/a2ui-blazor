@@ -1,5 +1,4 @@
 @page "/state-machine"
-@using blazor_wasm_spa.Services
 @implements IDisposable
 
 <A2UISurface SurfaceId="state-machine" OnAction="HandleAction" />
@@ -10,16 +9,12 @@
 }
 
 @code {
-    [Inject] private HttpClient Http { get; set; } = default!;
-    [Inject] private JsonlStreamReader Reader { get; set; } = default!;
-    [Inject] private MessageDispatcher Dispatcher { get; set; } = default!;
+    [Inject] private A2UIStreamClient Client { get; set; } = default!;
 
-    private A2UIStreamClient? _client;
     private string? _error;
 
     protected override Task OnInitializedAsync()
     {
-        _client = new A2UIStreamClient(Http, Reader, Dispatcher);
         _ = ConnectInBackground();
         return Task.CompletedTask;
     }
@@ -28,7 +23,7 @@
     {
         try
         {
-            await _client!.ConnectAsync("/agents/state-machine");
+            await Client.ConnectAsync("/agents/state-machine");
         }
         catch (Exception ex)
         {
@@ -39,5 +34,5 @@
 
     private Task HandleAction(A2UIUserAction action) => Task.CompletedTask;
 
-    public void Dispose() => _client?.Dispose();
+    public void Dispose() => Client?.Dispose();
 }

@@ -7,7 +7,7 @@ public static class A2UIBlazorServiceExtensions
 {
     /// <summary>
     /// Registers A2UI Blazor services: SurfaceManager, MessageDispatcher,
-    /// JsonlStreamReader, ComponentRegistry (with all standard components).
+    /// JsonlStreamReader, A2UIStreamClient, ComponentRegistry (with all standard components).
     /// </summary>
     public static IServiceCollection AddA2UIBlazor(
         this IServiceCollection services,
@@ -16,6 +16,7 @@ public static class A2UIBlazorServiceExtensions
         services.AddSingleton<SurfaceManager>();
         services.AddSingleton<MessageDispatcher>();
         services.AddTransient<JsonlStreamReader>();
+        services.AddTransient<A2UIStreamClient>();
 
         services.AddSingleton(sp =>
         {
