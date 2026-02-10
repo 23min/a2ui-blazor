@@ -4,6 +4,7 @@
     <PackageId>A2UI.Blazor.Server</PackageId>
     <Description>Server-side A2UI protocol helpers for ASP.NET Core</Description>
     <Authors>A2UI Blazor Contributors</Authors>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>

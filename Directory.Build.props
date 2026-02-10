@@ -6,4 +6,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <Version>0.2.0-preview</Version>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/23min/a2ui-blazor</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/23min/a2ui-blazor</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>blazor;a2ui;agent;ui;components</PackageTags>
+    <Copyright>Copyright (c) 2026 23min</Copyright>
+  </PropertyGroup>
 </Project>
