@@ -1,5 +1,6 @@
 using A2UI.Blazor.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace A2UI.Blazor;
 
@@ -20,7 +21,8 @@ public static class A2UIBlazorServiceExtensions
 
         services.AddSingleton(sp =>
         {
-            var registry = new ComponentRegistry();
+            var logger = sp.GetRequiredService<ILogger<ComponentRegistry>>();
+            var registry = new ComponentRegistry(logger);
             registry.RegisterStandardComponents();
             configureComponents?.Invoke(registry);
             return registry;

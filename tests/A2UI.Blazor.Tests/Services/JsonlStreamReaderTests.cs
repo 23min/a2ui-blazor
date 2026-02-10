@@ -1,11 +1,12 @@
 using System.Text;
 using A2UI.Blazor.Services;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace A2UI.Blazor.Tests.Services;
 
 public class JsonlStreamReaderTests
 {
-    private readonly JsonlStreamReader _reader = new();
+    private readonly JsonlStreamReader _reader = new(NullLogger<JsonlStreamReader>.Instance);
 
     private static Stream ToStream(string content) =>
         new MemoryStream(Encoding.UTF8.GetBytes(content));

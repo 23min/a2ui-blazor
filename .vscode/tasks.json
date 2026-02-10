@@ -104,6 +104,12 @@
       "dependsOn": ["Start .NET Server", "Start Blazor Server App"],
       "dependsOrder": "sequence",
       "problemMatcher": []
+    },
+    {
+      "label": "Demo: Python + Blazor Server",
+      "dependsOn": ["Start Python Server", "Start Blazor Server App"],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
     }
   ]
 }

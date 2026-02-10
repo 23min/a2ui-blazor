@@ -39,7 +39,15 @@
 
     private async Task HandleAction(A2UIUserAction action)
     {
-        await Client.SendActionAsync("/agents/restaurant", action);
+        try
+        {
+            await Client.SendActionAsync("/agents/restaurant", action);
+        }
+        catch (Exception ex)
+        {
+            _error = $"Failed to send action: {ex.Message}";
+            await InvokeAsync(StateHasChanged);
+        }
     }
 
     public void Dispose()

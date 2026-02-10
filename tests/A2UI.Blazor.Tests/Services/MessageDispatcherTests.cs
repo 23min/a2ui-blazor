@@ -1,17 +1,18 @@
 using System.Text.Json;
 using A2UI.Blazor.Protocol;
 using A2UI.Blazor.Services;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace A2UI.Blazor.Tests.Services;
 
 public class MessageDispatcherTests
 {
-    private readonly SurfaceManager _manager = new();
+    private readonly SurfaceManager _manager = new(NullLogger<SurfaceManager>.Instance);
     private readonly MessageDispatcher _dispatcher;
 
     public MessageDispatcherTests()
     {
-        _dispatcher = new MessageDispatcher(_manager);
+        _dispatcher = new MessageDispatcher(_manager, NullLogger<MessageDispatcher>.Instance);
     }
 
     [Fact]

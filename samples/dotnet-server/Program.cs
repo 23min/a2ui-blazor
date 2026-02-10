@@ -13,6 +13,7 @@ builder.Services.AddA2UIServer();
 builder.Services.AddA2UIAgent<RestaurantFinderAgent>();
 builder.Services.AddA2UIAgent<ContactLookupAgent>();
 builder.Services.AddA2UIAgent<ComponentGalleryAgent>();
+builder.Services.AddA2UIAgent<StateMachineAgent>();
 
 var app = builder.Build();
 

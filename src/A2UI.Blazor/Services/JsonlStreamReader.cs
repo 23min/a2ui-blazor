@@ -1,5 +1,7 @@
 using System.Text.Json;
+using A2UI.Blazor.Diagnostics;
 using A2UI.Blazor.Protocol;
+using Microsoft.Extensions.Logging;
 
 namespace A2UI.Blazor.Services;
 
@@ -9,10 +11,17 @@ namespace A2UI.Blazor.Services;
 /// </summary>
 public sealed class JsonlStreamReader
 {
+    private readonly ILogger<JsonlStreamReader> _logger;
+
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
     };
+
+    public JsonlStreamReader(ILogger<JsonlStreamReader> logger)
+    {
+        _logger = logger;
+    }
 
     /// <summary>
     /// Read messages from a stream (typically an HTTP response body).
@@ -50,8 +59,9 @@ public sealed class JsonlStreamReader
             {
                 message = JsonSerializer.Deserialize<A2UIMessage>(line, JsonOptions);
             }
-            catch (JsonException)
+            catch (JsonException ex)
             {
+                _logger.LogWarning(LogEvents.ParseError, ex, "Failed to parse JSONL line: {Line}", line.Length > 100 ? line[..100] + "..." : line);
                 continue; // skip malformed lines
             }
 

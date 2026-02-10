@@ -1,12 +1,13 @@
 using System.Text.Json;
 using A2UI.Blazor.Protocol;
 using A2UI.Blazor.Services;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace A2UI.Blazor.Tests.Services;
 
 public class SurfaceManagerTests
 {
-    private readonly SurfaceManager _manager = new();
+    private readonly SurfaceManager _manager = new(NullLogger<SurfaceManager>.Instance);
 
     private static JsonElement Parse(string json) =>
         JsonDocument.Parse(json).RootElement;

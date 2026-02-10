@@ -1,4 +1,6 @@
+using A2UI.Blazor.Diagnostics;
 using A2UI.Blazor.Protocol;
+using Microsoft.Extensions.Logging;
 
 namespace A2UI.Blazor.Services;
 
@@ -8,14 +10,18 @@ namespace A2UI.Blazor.Services;
 public sealed class MessageDispatcher
 {
     private readonly SurfaceManager _surfaceManager;
+    private readonly ILogger<MessageDispatcher> _logger;
 
-    public MessageDispatcher(SurfaceManager surfaceManager)
+    public MessageDispatcher(SurfaceManager surfaceManager, ILogger<MessageDispatcher> logger)
     {
         _surfaceManager = surfaceManager;
+        _logger = logger;
     }
 
     public void Dispatch(A2UIMessage message)
     {
+        _logger.LogDebug("Dispatching message type {MessageType} for surface {SurfaceId}", message.Type, message.SurfaceId);
+
         switch (message.Type)
         {
             case "createSurface":
@@ -30,12 +36,21 @@ public sealed class MessageDispatcher
             case "deleteSurface":
                 HandleDeleteSurface(message);
                 break;
+            default:
+                _logger.LogWarning(LogEvents.UnknownMessageType,
+                    "Unknown A2UI message type {MessageType} for surface {SurfaceId}",
+                    message.Type, message.SurfaceId);
+                break;
         }
     }
 
     private void HandleCreateSurface(A2UIMessage message)
     {
-        if (message.SurfaceId is null) return;
+        if (message.SurfaceId is null)
+        {
+            _logger.LogWarning(LogEvents.NullSurfaceId, "createSurface message missing surfaceId");
+            return;
+        }
         _surfaceManager.CreateSurface(
             message.SurfaceId,
             message.CatalogId,
@@ -44,19 +59,36 @@ public sealed class MessageDispatcher
 
     private void HandleUpdateComponents(A2UIMessage message)
     {
-        if (message.SurfaceId is null || message.Components is null) return;
+        if (message.SurfaceId is null)
+        {
+            _logger.LogWarning(LogEvents.NullSurfaceId, "updateComponents message missing surfaceId");
+            return;
+        }
+        if (message.Components is null)
+        {
+            _logger.LogWarning("updateComponents message missing components for surface {SurfaceId}", message.SurfaceId);
+            return;
+        }
         _surfaceManager.UpdateComponents(message.SurfaceId, message.Components);
     }
 
     private void HandleUpdateDataModel(A2UIMessage message)
     {
-        if (message.SurfaceId is null) return;
+        if (message.SurfaceId is null)
+        {
+            _logger.LogWarning(LogEvents.NullSurfaceId, "updateDataModel message missing surfaceId");
+            return;
+        }
         _surfaceManager.UpdateDataModel(message.SurfaceId, message.Path, message.Value);
     }
 
     private void HandleDeleteSurface(A2UIMessage message)
     {
-        if (message.SurfaceId is null) return;
+        if (message.SurfaceId is null)
+        {
+            _logger.LogWarning(LogEvents.NullSurfaceId, "deleteSurface message missing surfaceId");
+            return;
+        }
         _surfaceManager.DeleteSurface(message.SurfaceId);
     }
 }

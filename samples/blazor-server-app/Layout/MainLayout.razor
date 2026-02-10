@@ -1,4 +1,5 @@
 @inherits LayoutComponentBase
+@using Microsoft.AspNetCore.Components.Web
 
 <div class="app-layout">
     <nav class="app-nav">
@@ -7,10 +8,20 @@
             <a href="/restaurant">Restaurant Finder</a>
             <a href="/contacts">Contacts</a>
             <a href="/gallery">Component Gallery</a>
+            <a href="/state-machine">State Machine</a>
         </div>
         <span class="app-badge">Blazor Server (SSR)</span>
     </nav>
     <main class="app-main">
-        @Body
+        <ErrorBoundary>
+            <ChildContent>
+                @Body
+            </ChildContent>
+            <ErrorContent>
+                <div style="padding: 2rem; text-align: center; color: #d32f2f;">
+                    An unexpected error occurred.
+                </div>
+            </ErrorContent>
+        </ErrorBoundary>
     </main>
 </div>

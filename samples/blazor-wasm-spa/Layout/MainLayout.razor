@@ -1,4 +1,5 @@
 @inherits LayoutComponentBase
+@using Microsoft.AspNetCore.Components.Web
 
 <div class="app-layout">
     <nav class="app-nav">
@@ -11,6 +12,15 @@
         </div>
     </nav>
     <main class="app-main">
-        @Body
+        <ErrorBoundary>
+            <ChildContent>
+                @Body
+            </ChildContent>
+            <ErrorContent>
+                <div style="padding: 2rem; text-align: center; color: #d32f2f;">
+                    An unexpected error occurred.
+                </div>
+            </ErrorContent>
+        </ErrorBoundary>
     </main>
 </div>

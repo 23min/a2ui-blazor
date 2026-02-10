@@ -1,6 +1,8 @@
 using System.Net;
 using System.Text;
 using A2UI.Blazor.Services;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace A2UI.Blazor.Tests.Services;
 
@@ -157,10 +159,11 @@ public class A2UIStreamClientTests
         {
             BaseAddress = new Uri("http://localhost")
         };
-        var manager = new SurfaceManager();
-        var dispatcher = new MessageDispatcher(manager);
-        var reader = new JsonlStreamReader();
-        return new A2UIStreamClient(http, reader, dispatcher);
+        var manager = new SurfaceManager(NullLogger<SurfaceManager>.Instance);
+        var dispatcher = new MessageDispatcher(manager, NullLogger<MessageDispatcher>.Instance);
+        var reader = new JsonlStreamReader(NullLogger<JsonlStreamReader>.Instance);
+        var logger = NullLogger<A2UIStreamClient>.Instance;
+        return new A2UIStreamClient(http, reader, dispatcher, logger);
     }
 
     private static HttpResponseMessage OkResponse(string body)

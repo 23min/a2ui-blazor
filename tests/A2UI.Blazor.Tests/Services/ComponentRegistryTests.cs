@@ -4,6 +4,7 @@ using A2UI.Blazor.Components.Layout;
 using A2UI.Blazor.Components.Media;
 using A2UI.Blazor.Components.Visualization;
 using A2UI.Blazor.Services;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace A2UI.Blazor.Tests.Services;
 
@@ -13,7 +14,7 @@ public class ComponentRegistryTests
 
     public ComponentRegistryTests()
     {
-        _registry = new ComponentRegistry();
+        _registry = new ComponentRegistry(NullLogger<ComponentRegistry>.Instance);
         _registry.RegisterStandardComponents();
     }
 

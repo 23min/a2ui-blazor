@@ -1,17 +1,33 @@
 @using A2UI.Blazor.Protocol
 @using A2UI.Blazor.Services
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.Extensions.Logging
 @implements IDisposable
 
 <CascadingValue Value="SurfaceManagerService" IsFixed="true">
     <div class="a2ui-surface" data-surface-id="@SurfaceId">
-        @if (_surface?.GetRoot() is { } root)
-        {
-            <A2UIComponentRenderer Data="root" Surface="_surface" OnAction="HandleAction" />
-        }
-        else if (_surface is null)
-        {
-            <div class="a2ui-surface-loading">Connecting...</div>
-        }
+        <ErrorBoundary @ref="_surfaceErrorBoundary">
+            <ChildContent>
+                @if (_surface?.GetRoot() is { } root)
+                {
+                    <A2UIComponentRenderer Data="root" Surface="_surface" OnAction="HandleAction" />
+                }
+                else if (_surface is null)
+                {
+                    <div class="a2ui-surface-loading">Connecting...</div>
+                }
+            </ChildContent>
+            <ErrorContent Context="ex">
+                @(LogSurfaceError(ex))
+                <div class="a2ui-surface-error">
+                    <p>Something went wrong.</p>
+                    <button class="a2ui-button a2ui-button-secondary"
+                            @onclick="() => _surfaceErrorBoundary?.Recover()">
+                        Retry
+                    </button>
+                </div>
+            </ErrorContent>
+        </ErrorBoundary>
         @if (ConnectionState == StreamConnectionState.Reconnecting)
         {
             <div class="a2ui-surface-reconnecting">Reconnecting...</div>
@@ -32,10 +48,15 @@
     [Inject]
     private SurfaceManager SurfaceManagerService { get; set; } = default!;
 
+    [Inject]
+    private ILogger<A2UISurface> Logger { get; set; } = default!;
+
     private A2UISurfaceState? _surface;
+    private ErrorBoundary? _surfaceErrorBoundary;
 
     protected override void OnInitialized()
     {
+        Logger.LogDebug("A2UISurface {SurfaceId} initialized", SurfaceId);
         SurfaceManagerService.OnSurfaceChanged += HandleSurfaceChanged;
         _surface = SurfaceManagerService.GetSurface(SurfaceId);
     }
@@ -43,7 +64,9 @@
     private void HandleSurfaceChanged(string changedSurfaceId)
     {
         if (changedSurfaceId != SurfaceId) return;
+        Logger.LogDebug("A2UISurface {SurfaceId} received update", SurfaceId);
         _surface = SurfaceManagerService.GetSurface(SurfaceId);
+        _surfaceErrorBoundary?.Recover(); // Auto-recover on new data
         InvokeAsync(StateHasChanged);
     }
 
@@ -55,6 +78,13 @@
 
     public void Dispose()
     {
+        Logger.LogDebug("A2UISurface {SurfaceId} disposed", SurfaceId);
         SurfaceManagerService.OnSurfaceChanged -= HandleSurfaceChanged;
+    }
+
+    private string? LogSurfaceError(Exception ex)
+    {
+        Logger.LogError(ex, "Surface {SurfaceId} rendering failed", SurfaceId);
+        return null;
     }
 }

@@ -1,9 +1,29 @@
+@using A2UI.Blazor.Diagnostics
 @using A2UI.Blazor.Protocol
 @using A2UI.Blazor.Services
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.Extensions.Logging
 
 @if (_componentType is not null)
 {
-    <DynamicComponent Type="_componentType" Parameters="_parameters" />
+    <ErrorBoundary @ref="_errorBoundary">
+        <ChildContent>
+            <DynamicComponent Type="_componentType" Parameters="_parameters" />
+        </ChildContent>
+        <ErrorContent Context="ex">
+            @(LogComponentError(ex))
+            <div class="a2ui-component-error" title="@ex.Message">
+                Component "@Data.Component" failed to render
+            </div>
+        </ErrorContent>
+    </ErrorBoundary>
+}
+else
+{
+    @(LogUnknownComponent())
+    <div class="a2ui-component-unknown">
+        Unknown component: @Data.Component
+    </div>
 }
 
 @code {
@@ -22,8 +42,12 @@
     [Inject]
     private ComponentRegistry Registry { get; set; } = default!;
 
+    [Inject]
+    private ILogger<A2UIComponentRenderer> Logger { get; set; } = default!;
+
     private Type? _componentType;
     private Dictionary<string, object>? _parameters;
+    private ErrorBoundary? _errorBoundary;
 
     protected override void OnParametersSet()
     {
@@ -39,5 +63,20 @@
             if (OnAction.HasDelegate && _componentType.GetProperty("OnAction") is not null)
                 _parameters["OnAction"] = OnAction;
         }
+
+        // Auto-recover on data update
+        _errorBoundary?.Recover();
+    }
+
+    private string? LogComponentError(Exception ex)
+    {
+        Logger.LogError(ex, "Component {ComponentType} failed to render", Data.Component);
+        return null;
+    }
+
+    private string? LogUnknownComponent()
+    {
+        Logger.LogWarning(LogEvents.ComponentNotFound, "Unknown component type {ComponentType}", Data.Component);
+        return null;
     }
 }

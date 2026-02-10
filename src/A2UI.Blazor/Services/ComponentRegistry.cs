@@ -1,3 +1,6 @@
+using A2UI.Blazor.Diagnostics;
+using Microsoft.Extensions.Logging;
+
 namespace A2UI.Blazor.Services;
 
 /// <summary>
@@ -7,6 +10,12 @@ namespace A2UI.Blazor.Services;
 public sealed class ComponentRegistry
 {
     private readonly Dictionary<string, Type> _registry = new(StringComparer.OrdinalIgnoreCase);
+    private readonly ILogger<ComponentRegistry> _logger;
+
+    public ComponentRegistry(ILogger<ComponentRegistry> logger)
+    {
+        _logger = logger;
+    }
 
     /// <summary>
     /// Register a Blazor component type for a given A2UI component type string.
@@ -21,7 +30,12 @@ public sealed class ComponentRegistry
     /// </summary>
     public Type? Resolve(string a2uiType)
     {
-        return _registry.GetValueOrDefault(a2uiType);
+        var type = _registry.GetValueOrDefault(a2uiType);
+        if (type is null)
+        {
+            _logger.LogWarning(LogEvents.ComponentNotFound, "Unknown component type: {ComponentType}", a2uiType);
+        }
+        return type;
     }
 
     /// <summary>

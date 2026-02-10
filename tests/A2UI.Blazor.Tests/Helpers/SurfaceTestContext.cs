@@ -3,6 +3,7 @@ using A2UI.Blazor.Protocol;
 using A2UI.Blazor.Services;
 using Bunit;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace A2UI.Blazor.Tests.Helpers;
 
@@ -17,11 +18,11 @@ public class SurfaceTestContext : TestContext
 
     public SurfaceTestContext()
     {
-        Registry = new ComponentRegistry();
+        Registry = new ComponentRegistry(NullLogger<ComponentRegistry>.Instance);
         Registry.RegisterStandardComponents();
 
-        SurfaceManager = new SurfaceManager();
-        Dispatcher = new MessageDispatcher(SurfaceManager);
+        SurfaceManager = new SurfaceManager(NullLogger<SurfaceManager>.Instance);
+        Dispatcher = new MessageDispatcher(SurfaceManager, NullLogger<MessageDispatcher>.Instance);
 
         Services.AddSingleton(Registry);
         Services.AddSingleton(SurfaceManager);
