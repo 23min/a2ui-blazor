@@ -34,8 +34,8 @@ Make the library reliable enough for real applications.
 - [x] **Error handling** — structured error boundaries around component rendering, stream parsing, and action dispatch
 - [x] **Logging** — `ILogger<T>` integration throughout core services for diagnostics
 - [x] **Migrate to .NET 10** — target `net10.0` across all projects (#10); .NET 10 is current LTS; bUnit upgraded to 2.x
-- [ ] **NuGet packaging** — complete package metadata, CI build, publish `A2UI.Blazor` and `A2UI.Blazor.Server` to nuget.org
-- [ ] **GitHub Actions CI** — build, test, pack on every push; publish on tag
+- [x] **NuGet packaging** — complete package metadata for `A2UI.Blazor`; CI build produces `.nupkg` artifact
+- [x] **GitHub Actions CI** — build, test, pack on every push; publish to nuget.org on version tag
 - [x] **Live State Machine demo** — SVG custom component showing real-time agent state transitions; proves the custom component + streaming story
 
 ## v0.3.0-preview — A2UI v0.9 Spec Compliance
