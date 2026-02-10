@@ -23,7 +23,7 @@ public class ErrorBoundaryTests : SurfaceTestContext
         var surface = SetupSurface("test", components);
 
         // Render the component
-        var cut = RenderComponent<A2UIComponentRenderer>(parameters => parameters
+        var cut = Render<A2UIComponentRenderer>(parameters => parameters
             .Add(p => p.Data, surface.GetRoot()!)
             .Add(p => p.Surface, surface));
 
@@ -49,7 +49,7 @@ public class ErrorBoundaryTests : SurfaceTestContext
         var surface = SetupSurface("test", components);
 
         // Render the component
-        var cut = RenderComponent<A2UIComponentRenderer>(parameters => parameters
+        var cut = Render<A2UIComponentRenderer>(parameters => parameters
             .Add(p => p.Data, surface.GetRoot()!)
             .Add(p => p.Surface, surface));
 
@@ -67,7 +67,7 @@ public class ErrorBoundaryTests : SurfaceTestContext
     public void Surface_NoSurface_ShowsLoadingState()
     {
         // Create a surface component without creating the surface first
-        var cut = RenderComponent<A2UISurface>(parameters => parameters
+        var cut = Render<A2UISurface>(parameters => parameters
             .Add(p => p.SurfaceId, "nonexistent"));
 
         // Should show loading state
@@ -92,7 +92,7 @@ public class ErrorBoundaryTests : SurfaceTestContext
         SetupSurface("test", components);
 
         // Render the surface
-        var cut = RenderComponent<A2UISurface>(parameters => parameters
+        var cut = Render<A2UISurface>(parameters => parameters
             .Add(p => p.SurfaceId, "test"));
 
         // Should render the content
@@ -121,7 +121,7 @@ public class ErrorBoundaryTests : SurfaceTestContext
         SetupSurface("test", components);
 
         // Render with Reconnecting state
-        var cut = RenderComponent<A2UISurface>(parameters => parameters
+        var cut = Render<A2UISurface>(parameters => parameters
             .Add(p => p.SurfaceId, "test")
             .Add(p => p.ConnectionState, StreamConnectionState.Reconnecting));
 
@@ -151,7 +151,7 @@ public class ErrorBoundaryTests : SurfaceTestContext
         SetupSurface("test", components);
 
         // Render with Connected state
-        var cut = RenderComponent<A2UISurface>(parameters => parameters
+        var cut = Render<A2UISurface>(parameters => parameters
             .Add(p => p.SurfaceId, "test")
             .Add(p => p.ConnectionState, StreamConnectionState.Connected));
 
@@ -177,7 +177,7 @@ public class ErrorBoundaryTests : SurfaceTestContext
         // Should not throw when rendering unknown component
         var ex = Record.Exception(() =>
         {
-            var cut = RenderComponent<A2UISurface>(parameters => parameters
+            var cut = Render<A2UISurface>(parameters => parameters
                 .Add(p => p.SurfaceId, "test"));
         });
 
@@ -206,7 +206,7 @@ public class ErrorBoundaryTests : SurfaceTestContext
         var surface = SetupSurface("test", components);
 
         // Render the surface
-        var cut = RenderComponent<A2UISurface>(parameters => parameters
+        var cut = Render<A2UISurface>(parameters => parameters
             .Add(p => p.SurfaceId, "test"));
 
         // Should render the column (even if empty)

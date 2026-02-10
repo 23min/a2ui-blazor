@@ -18,7 +18,7 @@ public class ButtonTests : IDisposable
             })
         ]);
 
-        var cut = _ctx.RenderComponent<A2UIButton>(p => p
+        var cut = _ctx.Render<A2UIButton>(p => p
             .Add(c => c.Data, surface.Components["btn"])
             .Add(c => c.Surface, surface));
 
@@ -37,7 +37,7 @@ public class ButtonTests : IDisposable
             })
         ]);
 
-        var cut = _ctx.RenderComponent<A2UIButton>(p => p
+        var cut = _ctx.Render<A2UIButton>(p => p
             .Add(c => c.Data, surface.Components["btn"])
             .Add(c => c.Surface, surface));
 
@@ -55,7 +55,7 @@ public class ButtonTests : IDisposable
             })
         ]);
 
-        var cut = _ctx.RenderComponent<A2UIButton>(p => p
+        var cut = _ctx.Render<A2UIButton>(p => p
             .Add(c => c.Data, surface.Components["btn"])
             .Add(c => c.Surface, surface));
 
@@ -76,7 +76,7 @@ public class ButtonTests : IDisposable
 
         A2UIUserAction? capturedAction = null;
 
-        var cut = _ctx.RenderComponent<A2UIButton>(p => p
+        var cut = _ctx.Render<A2UIButton>(p => p
             .Add(c => c.Data, surface.Components["btn"])
             .Add(c => c.Surface, surface)
             .Add(c => c.OnAction, action => capturedAction = action));
@@ -100,7 +100,7 @@ public class ButtonTests : IDisposable
             })
         ]);
 
-        var cut = _ctx.RenderComponent<A2UIButton>(p => p
+        var cut = _ctx.Render<A2UIButton>(p => p
             .Add(c => c.Data, surface.Components["btn"])
             .Add(c => c.Surface, surface));
 

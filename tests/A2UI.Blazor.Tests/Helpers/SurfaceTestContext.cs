@@ -10,7 +10,7 @@ namespace A2UI.Blazor.Tests.Helpers;
 /// <summary>
 /// Shared bUnit test context with A2UI services pre-registered.
 /// </summary>
-public class SurfaceTestContext : TestContext
+public class SurfaceTestContext : BunitContext
 {
     public SurfaceManager SurfaceManager { get; }
     public MessageDispatcher Dispatcher { get; }

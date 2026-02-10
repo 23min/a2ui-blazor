@@ -64,9 +64,9 @@ The Blazor WASM SPA (`samples/blazor-wasm-spa`) and Blazor Server App (`samples/
 
 ### Build Configuration
 
-- .NET 10 is the target (migration from .NET 8 pending — do on its own branch)
+- .NET 10 (current LTS) is the target framework
 - `TreatWarningsAsErrors: true` — zero warnings policy
-- C# 12, nullable enabled, implicit usings enabled
+- C# 14, nullable enabled, implicit usings enabled
 
 ### Branching
 
