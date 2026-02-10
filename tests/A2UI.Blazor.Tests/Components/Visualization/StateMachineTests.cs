@@ -1,6 +1,7 @@
 using A2UI.Blazor.Components.Visualization;
 using A2UI.Blazor.Services;
 using A2UI.Blazor.Tests.Helpers;
+using Bunit;
 using Microsoft.AspNetCore.Components;
 
 namespace A2UI.Blazor.Tests.Components.Visualization;
@@ -12,7 +13,7 @@ public class StateMachineTests : IDisposable
     /// <summary>
     /// Render A2UIStateMachine with CascadingValue for SurfaceManager (required for data binding).
     /// </summary>
-    private IRenderedFragment RenderStateMachine(A2UI.Blazor.Protocol.A2UISurfaceState surface, string componentId)
+    private IRenderedComponent<IComponent> RenderStateMachine(A2UI.Blazor.Protocol.A2UISurfaceState surface, string componentId)
     {
         return _ctx.Render(builder =>
         {

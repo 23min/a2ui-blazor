@@ -19,7 +19,7 @@ public class TextFieldTests : IDisposable
             })
         ]);
 
-        var cut = _ctx.RenderComponent<A2UITextField>(p => p
+        var cut = _ctx.Render<A2UITextField>(p => p
             .Add(c => c.Data, surface.Components["tf"])
             .Add(c => c.Surface, surface));
 
@@ -37,7 +37,7 @@ public class TextFieldTests : IDisposable
             })
         ]);
 
-        var cut = _ctx.RenderComponent<A2UITextField>(p => p
+        var cut = _ctx.Render<A2UITextField>(p => p
             .Add(c => c.Data, surface.Components["tf"])
             .Add(c => c.Surface, surface));
 
@@ -57,7 +57,7 @@ public class TextFieldTests : IDisposable
 
         A2UIUserAction? capturedAction = null;
 
-        var cut = _ctx.RenderComponent<A2UITextField>(p => p
+        var cut = _ctx.Render<A2UITextField>(p => p
             .Add(c => c.Data, surface.Components["tf"])
             .Add(c => c.Surface, surface)
             .Add(c => c.OnAction, action => capturedAction = action));
@@ -80,7 +80,7 @@ public class TextFieldTests : IDisposable
             })
         ]);
 
-        var cut = _ctx.RenderComponent<A2UITextField>(p => p
+        var cut = _ctx.Render<A2UITextField>(p => p
             .Add(c => c.Data, surface.Components["tf"])
             .Add(c => c.Surface, surface));
 
@@ -99,7 +99,7 @@ public class TextFieldTests : IDisposable
             })
         ]);
 
-        var cut = _ctx.RenderComponent<A2UITextField>(p => p
+        var cut = _ctx.Render<A2UITextField>(p => p
             .Add(c => c.Data, surface.Components["tf"])
             .Add(c => c.Surface, surface));
 

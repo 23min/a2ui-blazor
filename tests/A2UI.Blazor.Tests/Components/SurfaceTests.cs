@@ -2,6 +2,7 @@ using System.Text.Json;
 using A2UI.Blazor.Components;
 using A2UI.Blazor.Protocol;
 using A2UI.Blazor.Tests.Helpers;
+using Bunit;
 using Microsoft.AspNetCore.Components;
 
 namespace A2UI.Blazor.Tests.Components;
@@ -10,7 +11,7 @@ public class SurfaceTests : IDisposable
 {
     private readonly SurfaceTestContext _ctx = new();
 
-    private IRenderedFragment RenderSurface(string surfaceId, Action<A2UIUserAction>? onAction = null)
+    private IRenderedComponent<IComponent> RenderSurface(string surfaceId, Action<A2UIUserAction>? onAction = null)
     {
         return _ctx.Render(builder =>
         {

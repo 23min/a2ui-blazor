@@ -33,7 +33,7 @@ Make the library reliable enough for real applications.
 - [x] **Reconnecting UI** — visual overlay ("Reconnecting...") during stream recovery
 - [x] **Error handling** — structured error boundaries around component rendering, stream parsing, and action dispatch
 - [x] **Logging** — `ILogger<T>` integration throughout core services for diagnostics
-- [ ] **Migrate to .NET 10** — target `net10.0` across all projects (#10); .NET 10 is current LTS
+- [x] **Migrate to .NET 10** — target `net10.0` across all projects (#10); .NET 10 is current LTS; bUnit upgraded to 2.x
 - [ ] **NuGet packaging** — complete package metadata, CI build, publish `A2UI.Blazor` and `A2UI.Blazor.Server` to nuget.org
 - [ ] **GitHub Actions CI** — build, test, pack on every push; publish on tag
 - [x] **Live State Machine demo** — SVG custom component showing real-time agent state transitions; proves the custom component + streaming story

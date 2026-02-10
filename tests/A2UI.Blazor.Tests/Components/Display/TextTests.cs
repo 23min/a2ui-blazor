@@ -23,7 +23,7 @@ public class TextTests : IDisposable
             })
         ]);
 
-        var cut = _ctx.RenderComponent<A2UIText>(p => p
+        var cut = _ctx.Render<A2UIText>(p => p
             .Add(c => c.Data, surface.Components["root"])
             .Add(c => c.Surface, surface));
 
@@ -41,7 +41,7 @@ public class TextTests : IDisposable
             })
         ]);
 
-        var cut = _ctx.RenderComponent<A2UIText>(p => p
+        var cut = _ctx.Render<A2UIText>(p => p
             .Add(c => c.Data, surface.Components["root"])
             .Add(c => c.Surface, surface));
 
@@ -59,7 +59,7 @@ public class TextTests : IDisposable
             })
         ]);
 
-        var cut = _ctx.RenderComponent<A2UIText>(p => p
+        var cut = _ctx.Render<A2UIText>(p => p
             .Add(c => c.Data, surface.Components["root"])
             .Add(c => c.Surface, surface));
 
@@ -78,7 +78,7 @@ public class TextTests : IDisposable
             })
         ]);
 
-        var cut = _ctx.RenderComponent<A2UIText>(p => p
+        var cut = _ctx.Render<A2UIText>(p => p
             .Add(c => c.Data, surface.Components["root"])
             .Add(c => c.Surface, surface));
 

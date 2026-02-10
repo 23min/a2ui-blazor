@@ -1,6 +1,7 @@
 using A2UI.Blazor.Components.Layout;
 using A2UI.Blazor.Services;
 using A2UI.Blazor.Tests.Helpers;
+using Bunit;
 using Microsoft.AspNetCore.Components;
 
 namespace A2UI.Blazor.Tests.Components.Layout;
@@ -12,7 +13,7 @@ public class ListTests : IDisposable
     /// <summary>
     /// Render A2UIList wrapped in CascadingValue for SurfaceManager (needed for data binding in template mode).
     /// </summary>
-    private IRenderedFragment RenderList(A2UI.Blazor.Protocol.A2UISurfaceState surface, string componentId)
+    private IRenderedComponent<IComponent> RenderList(A2UI.Blazor.Protocol.A2UISurfaceState surface, string componentId)
     {
         return _ctx.Render(builder =>
         {
@@ -90,7 +91,7 @@ public class ListTests : IDisposable
             SurfaceTestContext.MakeComponent("c2", "Text", new() { ["text"] = "Two" })
         ]);
 
-        var cut = _ctx.RenderComponent<A2UIList>(p => p
+        var cut = _ctx.Render<A2UIList>(p => p
             .Add(c => c.Data, surface.Components["list"])
             .Add(c => c.Surface, surface));
 
@@ -130,7 +131,7 @@ public class ListTests : IDisposable
             SurfaceTestContext.MakeComponent("c1", "Text", new() { ["text"] = "Fallback" })
         ]);
 
-        var cut = _ctx.RenderComponent<A2UIList>(p => p
+        var cut = _ctx.Render<A2UIList>(p => p
             .Add(c => c.Data, surface.Components["list"])
             .Add(c => c.Surface, surface));
 

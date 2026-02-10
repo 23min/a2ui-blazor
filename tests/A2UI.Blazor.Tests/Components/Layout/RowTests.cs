@@ -19,7 +19,7 @@ public class RowTests : IDisposable
             SurfaceTestContext.MakeComponent("t2", "Text", new() { ["text"] = "B" })
         ]);
 
-        var cut = _ctx.RenderComponent<A2UIRow>(p => p
+        var cut = _ctx.Render<A2UIRow>(p => p
             .Add(c => c.Data, surface.Components["row"])
             .Add(c => c.Surface, surface));
 
@@ -43,7 +43,7 @@ public class RowTests : IDisposable
             SurfaceTestContext.MakeComponent("t1", "Text", new() { ["text"] = "X" })
         ]);
 
-        var cut = _ctx.RenderComponent<A2UIRow>(p => p
+        var cut = _ctx.Render<A2UIRow>(p => p
             .Add(c => c.Data, surface.Components["row"])
             .Add(c => c.Surface, surface));
 
@@ -64,7 +64,7 @@ public class RowTests : IDisposable
             SurfaceTestContext.MakeComponent("exists", "Text", new() { ["text"] = "Here" })
         ]);
 
-        var cut = _ctx.RenderComponent<A2UIRow>(p => p
+        var cut = _ctx.Render<A2UIRow>(p => p
             .Add(c => c.Data, surface.Components["row"])
             .Add(c => c.Surface, surface));
 

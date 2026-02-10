@@ -19,7 +19,7 @@ public class CardTests : IDisposable
             SurfaceTestContext.MakeComponent("body", "Text", new() { ["text"] = "Content" })
         ]);
 
-        var cut = _ctx.RenderComponent<A2UICard>(p => p
+        var cut = _ctx.Render<A2UICard>(p => p
             .Add(c => c.Data, surface.Components["card"])
             .Add(c => c.Surface, surface));
 
@@ -39,7 +39,7 @@ public class CardTests : IDisposable
             SurfaceTestContext.MakeComponent("c1", "Text", new() { ["text"] = "Inside card" })
         ]);
 
-        var cut = _ctx.RenderComponent<A2UICard>(p => p
+        var cut = _ctx.Render<A2UICard>(p => p
             .Add(c => c.Data, surface.Components["card"])
             .Add(c => c.Surface, surface));
 
@@ -58,7 +58,7 @@ public class CardTests : IDisposable
             SurfaceTestContext.MakeComponent("c1", "Text", new() { ["text"] = "Content" })
         ]);
 
-        var cut = _ctx.RenderComponent<A2UICard>(p => p
+        var cut = _ctx.Render<A2UICard>(p => p
             .Add(c => c.Data, surface.Components["card"])
             .Add(c => c.Surface, surface));
 

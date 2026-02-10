@@ -19,7 +19,7 @@ public class ColumnTests : IDisposable
             SurfaceTestContext.MakeComponent("t2", "Text", new() { ["text"] = "Second" })
         ]);
 
-        var cut = _ctx.RenderComponent<A2UIColumn>(p => p
+        var cut = _ctx.Render<A2UIColumn>(p => p
             .Add(c => c.Data, surface.Components["col"])
             .Add(c => c.Surface, surface));
 
@@ -42,7 +42,7 @@ public class ColumnTests : IDisposable
             SurfaceTestContext.MakeComponent("t1", "Text", new() { ["text"] = "X" })
         ]);
 
-        var cut = _ctx.RenderComponent<A2UIColumn>(p => p
+        var cut = _ctx.Render<A2UIColumn>(p => p
             .Add(c => c.Data, surface.Components["col"])
             .Add(c => c.Surface, surface));
 
