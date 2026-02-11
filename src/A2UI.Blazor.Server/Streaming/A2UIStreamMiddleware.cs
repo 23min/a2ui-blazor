@@ -55,14 +55,14 @@ public sealed class A2UIStreamMiddleware
         await agent.HandleAsync(writer, context.RequestAborted);
     }
 
+    private static readonly JsonSerializerOptions s_jsonOptions = new() { PropertyNameCaseInsensitive = true };
+
     private static async Task HandleAction(HttpContext context, IA2UIAgent agent)
     {
-        var action = await JsonSerializer.DeserializeAsync<UserActionRequest>(
-            context.Request.Body,
-            new JsonSerializerOptions { PropertyNameCaseInsensitive = true },
-            context.RequestAborted);
+        var envelope = await JsonSerializer.DeserializeAsync<ClientMessageEnvelope>(
+            context.Request.Body, s_jsonOptions, context.RequestAborted);
 
-        if (action is null)
+        if (envelope?.Action is null)
         {
             context.Response.StatusCode = 400;
             return;
@@ -72,6 +72,12 @@ public sealed class A2UIStreamMiddleware
         context.Response.Headers.CacheControl = "no-cache";
 
         var writer = new A2UIStreamWriter(context.Response.Body, useSse: true);
-        await agent.HandleActionAsync(writer, action, context.RequestAborted);
+        await agent.HandleActionAsync(writer, envelope.Action, context.RequestAborted);
+    }
+
+    private sealed class ClientMessageEnvelope
+    {
+        public string Version { get; set; } = string.Empty;
+        public UserActionRequest? Action { get; set; }
     }
 }

@@ -30,7 +30,7 @@
                 SourceComponentId = Data.Id,
                 Context = action.Event.Context?.ToDictionary(
                     kvp => kvp.Key,
-                    kvp => (object?)ResolveContextValue(kvp.Value))
+                    kvp => (object?)ResolveContextValue(kvp.Value)) ?? new()
             };
             await OnAction.InvokeAsync(userAction);
         }

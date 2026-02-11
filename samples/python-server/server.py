@@ -73,7 +73,8 @@ async def restaurant_stream():
 @app.post("/agents/restaurant")
 async def restaurant_action(request: Request):
     body = await request.json()
-    query = (body.get("context") or {}).get("value", "")
+    action = body.get("action", {})
+    query = (action.get("context") or {}).get("value", "")
 
     if query:
         filtered = [r for r in ALL_RESTAURANTS if query.lower() in r["name"].lower() or query.lower() in r["cuisine"].lower()]
@@ -117,7 +118,8 @@ async def contacts_stream():
 @app.post("/agents/contacts")
 async def contacts_action(request: Request):
     body = await request.json()
-    query = (body.get("context") or {}).get("value", "")
+    action = body.get("action", {})
+    query = (action.get("context") or {}).get("value", "")
 
     if query:
         filtered = [c for c in ALL_CONTACTS if query.lower() in c["name"].lower() or query.lower() in c["department"].lower()]

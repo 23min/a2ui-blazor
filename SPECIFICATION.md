@@ -55,38 +55,29 @@ v0.10 evolution guide is still TBD, but new documents include:
 
 | Feature | Ours | v0.8 | v0.9 | v0.10 | Notes |
 |---------|------|------|------|-------|-------|
-| `userAction` payload | ✅ | ✅ | ✅ | same | Core action fields present |
-| A2A message envelope | ❌ | 🚨 | 🚨 | 🚨 | **Critical** — not wrapping in A2A envelope |
-| `a2uiClientCapabilities` | ❌ | 🚨 | 🚨 | 🚨 | **Required** — must declare supported catalogs |
+| `userAction` payload | ✅ | ✅ | ✅ | same | v0.9 envelope: `{version, action}` per `client_to_server.json` |
+| v0.9 message envelope | ✅ | N/A | ✅ | same | `{version: "v0.9", action: {...}}` with ISO 8601 timestamp |
+| `a2uiClientCapabilities` | ✅ | N/A | ✅ | same | Sent via `A2UI-Client-Capabilities` HTTP header |
 | `sendDataModel` sync | ❌ | N/A | ❌ | TBD | **Gap** — v0.9 requires sending data model back with actions |
 | `error` message type | ❌ | ❌ | ❌ | TBD | **Gap** — client→server error reporting |
 | Custom functions | N/A | N/A | N/A | 📋 | v0.10 feature — developer-defined extensions |
 
-**Critical Gap:** We send bare `userAction` JSON instead of wrapping it in the required A2A message envelope:
+**Client-to-server message format** (v0.9 compliant):
 
 ```json
-// ❌ What we currently send:
 {
-  "type": "action",
-  "name": "submit",
-  "surfaceId": "main"
-}
-
-// ✅ What the spec requires:
-{
-  "metadata": {
-    "a2uiClientCapabilities": {
-      "supportedCatalogIds": ["https://a2ui.org/specification/v0_8/standard_catalog_definition.json"]
-    }
-  },
-  "message": {
-    "userAction": {
-      "name": "submit",
-      "surfaceId": "main"
-    }
+  "version": "v0.9",
+  "action": {
+    "name": "submit",
+    "surfaceId": "main",
+    "sourceComponentId": "submit-btn",
+    "timestamp": "2026-02-10T12:00:00.000+00:00",
+    "context": {}
   }
 }
 ```
+
+Client capabilities are sent via HTTP header: `A2UI-Client-Capabilities: {"v0.9":{"supportedCatalogIds":[...]}}`
 
 ---
 
@@ -189,10 +180,10 @@ This table tracks which property names we use vs what each spec version expects.
 
 ### High Priority (Blocking spec compliance)
 
-1. **A2A Message Envelope** (🚨 Critical — all versions)
-   - Wrap `userAction` in A2A message structure
-   - Add `metadata.a2uiClientCapabilities`
-   - Declare supported catalog IDs
+1. ~~**A2A Message Envelope**~~ ✅ Done
+   - v0.9 envelope format: `{version, action}` per `client_to_server.json`
+   - Client capabilities sent via `A2UI-Client-Capabilities` HTTP header
+   - ISO 8601 timestamps, required `context` field
 
 2. **Property Name Migration to v0.9** (⚠️ 4 components remaining)
    - ✅ Done: `usageHint` → `variant`, `distribution` → `justify`, `alignment` → `align`
