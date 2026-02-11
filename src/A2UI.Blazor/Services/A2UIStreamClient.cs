@@ -199,7 +199,8 @@ public sealed class A2UIStreamClient : IDisposable
 
     public void Dispose()
     {
-        _cts?.Cancel();
+        try { _cts?.Cancel(); }
+        catch (ObjectDisposedException) { }
         _cts?.Dispose();
     }
 

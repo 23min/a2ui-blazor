@@ -274,3 +274,67 @@ async def state_machine_stream():
             }})
 
     return StreamingResponse(generate(), media_type="text/event-stream")
+
+
+# ── Error Demo ──────────────────────────────────────────────────────
+
+error_demo_count = 0
+
+
+@app.get("/agents/error-demo")
+async def error_demo_stream():
+    async def generate():
+        yield sse({"type": "createSurface", "surfaceId": "error-demo", "sendDataModel": True})
+        yield sse({"type": "updateDataModel", "surfaceId": "error-demo", "path": "/", "value": {
+            "lastErrorMessage": "No errors reported yet.",
+            "errorCount": 0,
+        }})
+        yield sse(components_msg("error-demo", [
+            {"id": "root", "component": "Column", "children": [
+                "header", "description", "divider1", "unknown-section", "divider2", "report-section",
+            ], "gap": "16"},
+            {"id": "header", "component": "Text", "text": "Error Handling Demo", "variant": "h2"},
+            {"id": "description", "component": "Text", "text": "This demo shows how A2UI handles errors gracefully \u2014 unknown components render fallback UI, and errors can be reported back to the server.", "variant": "body"},
+            {"id": "divider1", "component": "Divider"},
+            # Unknown component section
+            {"id": "unknown-section", "component": "Card", "title": "Unknown Component", "children": ["unknown-col"]},
+            {"id": "unknown-col", "component": "Column", "children": ["unknown-desc", "unknown-component"], "gap": "8"},
+            {"id": "unknown-desc", "component": "Text", "text": "The component below uses type 'FancyWidget' which doesn't exist in the standard catalog. The renderer shows a graceful fallback:", "variant": "body"},
+            {"id": "unknown-component", "component": "FancyWidget"},
+            {"id": "divider2", "component": "Divider"},
+            # Error reporting section
+            {"id": "report-section", "component": "Card", "title": "Error Reporting", "children": ["report-col"]},
+            {"id": "report-col", "component": "Column", "children": ["report-desc", "report-btn", "error-status"], "gap": "8"},
+            {"id": "report-desc", "component": "Text", "text": "Click the button to send a VALIDATION_FAILED error report to the server via the v0.9 error envelope. The server will acknowledge receipt.", "variant": "body"},
+            {"id": "report-btn", "component": "Button", "label": "Report Error to Server", "action": {"event": {"name": "report-error"}}},
+            {"id": "error-status", "component": "Text", "text": "/lastErrorMessage", "variant": "caption"},
+        ]))
+        while True:
+            await asyncio.sleep(30)
+            yield ": keepalive\n\n"
+
+    return StreamingResponse(generate(), media_type="text/event-stream")
+
+
+@app.post("/agents/error-demo")
+async def error_demo_action(request: Request):
+    global error_demo_count
+    body = await request.json()
+
+    if "error" in body:
+        error = body["error"]
+        error_demo_count += 1
+        message = f"Server received error #{error_demo_count}: [{error.get('code', '')}] {error.get('message', '')}"
+        path = error.get("path")
+        if path:
+            message += f" (path: {path})"
+
+        async def generate():
+            yield sse({"type": "updateDataModel", "surfaceId": "error-demo", "path": "/", "value": {
+                "lastErrorMessage": message,
+                "errorCount": error_demo_count,
+            }})
+
+        return StreamingResponse(generate(), media_type="text/event-stream")
+
+    return StreamingResponse(iter([]), media_type="text/event-stream")

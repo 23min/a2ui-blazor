@@ -1,0 +1,69 @@
+@page "/error-demo"
+@implements IDisposable
+
+<A2UISurface SurfaceId="error-demo" OnAction="HandleAction" ConnectionState="Client.State" />
+
+@if (_error is not null)
+{
+    <div class="error-message">@_error</div>
+}
+
+@code {
+    [Inject] private A2UIStreamClient Client { get; set; } = default!;
+
+    private string? _error;
+
+    protected override Task OnInitializedAsync()
+    {
+        Client.OnStateChanged += HandleStateChanged;
+        _ = ConnectInBackground();
+        return Task.CompletedTask;
+    }
+
+    private async Task ConnectInBackground()
+    {
+        try
+        {
+            await Client.ConnectAsync("/agents/error-demo");
+        }
+        catch (Exception ex)
+        {
+            _error = $"Failed to connect: {ex.Message}";
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void HandleStateChanged(StreamConnectionState _) => InvokeAsync(StateHasChanged);
+
+    private async Task HandleAction(A2UIUserAction action)
+    {
+        try
+        {
+            if (action.Name == "report-error")
+            {
+                await Client.SendErrorAsync("/agents/error-demo", new A2UIClientError
+                {
+                    Code = "VALIDATION_FAILED",
+                    SurfaceId = "error-demo",
+                    Message = "Example validation error from client",
+                    Path = "/components/unknown-component"
+                });
+            }
+            else
+            {
+                await Client.SendActionAsync("/agents/error-demo", action);
+            }
+        }
+        catch (Exception ex)
+        {
+            _error = $"Failed to send: {ex.Message}";
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public void Dispose()
+    {
+        Client.OnStateChanged -= HandleStateChanged;
+        Client.Dispose();
+    }
+}

@@ -376,6 +376,28 @@ public class A2UIStreamClientTests
         Assert.NotNull(manager.GetSurface("ack"));
     }
 
+    [Fact]
+    public async Task Dispose_CalledTwice_AfterConnect_DoesNotThrow()
+    {
+        var jsonl = """{"type":"createSurface","surfaceId":"s1"}""" + "\n";
+        var client = CreateClient(_ => Task.FromResult(OkResponse(jsonl)));
+
+        client.OnStateChanged += s =>
+        {
+            if (s == StreamConnectionState.Connected)
+                client.Disconnect();
+        };
+
+        await client.ConnectAsync("/test");
+
+        // First dispose cancels and disposes the CTS
+        client.Dispose();
+
+        // Second dispose must not throw ObjectDisposedException
+        var ex = Record.Exception(() => client.Dispose());
+        Assert.Null(ex);
+    }
+
     // --- Helpers ---
 
     private static A2UIStreamClient CreateClient(Func<HttpRequestMessage, Task<HttpResponseMessage>> handler)

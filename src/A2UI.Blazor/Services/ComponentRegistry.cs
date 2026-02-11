@@ -10,6 +10,7 @@ namespace A2UI.Blazor.Services;
 public sealed class ComponentRegistry
 {
     private readonly Dictionary<string, Type> _registry = new(StringComparer.OrdinalIgnoreCase);
+    private readonly HashSet<string> _warnedTypes = new(StringComparer.OrdinalIgnoreCase);
     private readonly ILogger<ComponentRegistry> _logger;
 
     public ComponentRegistry(ILogger<ComponentRegistry> logger)
@@ -31,7 +32,7 @@ public sealed class ComponentRegistry
     public Type? Resolve(string a2uiType)
     {
         var type = _registry.GetValueOrDefault(a2uiType);
-        if (type is null)
+        if (type is null && _warnedTypes.Add(a2uiType))
         {
             _logger.LogWarning(LogEvents.ComponentNotFound, "Unknown component type: {ComponentType}", a2uiType);
         }
