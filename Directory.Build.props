@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>0.2.0-preview</Version>
+    <Version>0.3.0-preview</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/23min/a2ui-blazor</PackageProjectUrl>
     <RepositoryUrl>https://github.com/23min/a2ui-blazor</RepositoryUrl>
