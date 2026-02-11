@@ -45,9 +45,9 @@ v0.10 evolution guide is still TBD, but new documents include:
 | Update components | ✅ | `surfaceUpdate` | `updateComponents` | same | We use v0.9 name |
 | Update data model | ✅ | `dataModelUpdate` | `updateDataModel` | same | We use v0.9 name. v0.9 changed from array-of-pairs to JSON object |
 | Delete surface | ✅ | `deleteSurface` | `deleteSurface` | same | Unchanged across versions |
-| Render buffering | ❌ | Required | Required | TBD | **Gap** — we render immediately instead of buffering until explicit signal |
+| Render buffering | ✅ | Required | Required | TBD | Buffer until root component arrives; single flush event |
 
-**Gaps:** We do not implement render buffering, `catalogId`, or `theme` on `createSurface`.
+**Gaps:** We do not implement `catalogId` or `theme` on `createSurface`.
 
 ---
 
@@ -192,9 +192,10 @@ This table tracks which property names we use vs what each spec version expects.
      - TextField: `textFieldType` → `variant`
      - ChoicePicker: `selections` → `value`
 
-3. **Render Buffering** (🚨 Required — all versions)
-   - Buffer messages until explicit render signal
-   - Currently rendering immediately on `createSurface`
+3. ~~**Render Buffering**~~ ✅ Done
+   - Buffer messages until root component arrives in `updateComponents`
+   - Single `OnSurfaceChanged` event fires when root arrives (flush)
+   - Subsequent updates fire immediately (progressive rendering)
 
 ### Medium Priority (v0.9 gaps)
 

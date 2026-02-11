@@ -39,7 +39,6 @@ public sealed class SurfaceManager
             SendDataModel = sendDataModel
         };
         _surfaces[surfaceId] = surface;
-        NotifySurfaceChanged(surfaceId);
     }
 
     public void UpdateComponents(string surfaceId, List<A2UIComponentData> components)
@@ -56,7 +55,16 @@ public sealed class SurfaceManager
             surface.Components[component.Id] = component;
         }
 
-        NotifySurfaceChanged(surfaceId);
+        if (!surface.IsReady && surface.GetRoot() is not null)
+        {
+            surface.IsReady = true;
+            _logger.LogInformation(LogEvents.SurfaceReady, "Surface {SurfaceId} is ready (root component received)", surfaceId);
+        }
+
+        if (surface.IsReady)
+        {
+            NotifySurfaceChanged(surfaceId);
+        }
     }
 
     public void UpdateDataModel(string surfaceId, string? path, JsonElement? value)
@@ -89,7 +97,10 @@ public sealed class SurfaceManager
                 surface.DataModel = JsonDocument.Parse(updated.GetRawText());
             }
 
-            NotifySurfaceChanged(surfaceId);
+            if (surface.IsReady)
+            {
+                NotifySurfaceChanged(surfaceId);
+            }
         }
         catch (JsonException ex)
         {

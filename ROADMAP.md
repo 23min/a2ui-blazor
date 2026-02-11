@@ -48,7 +48,7 @@ Close the gaps between our implementation and the A2UI v0.9 specification. See [
 
 - [x] **A2A message envelope + client capabilities** — v0.9 `{version, action}` envelope, `A2UI-Client-Capabilities` header, ISO 8601 timestamps (#4)
 - [x] **Property name migration to v0.9** — `usageHint` → `variant`, `distribution` → `justify`, `alignment` → `align` (#5)
-- [ ] **Render buffering** — buffer messages until explicit render signal instead of rendering immediately on `createSurface` (#6)
+- [x] **Render buffering** — buffer until root component arrives; single flush event (#6)
 
 ### Medium Priority
 
