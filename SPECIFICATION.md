@@ -2,8 +2,8 @@
 
 **Current Target:** [A2UI v0.9](https://github.com/google/A2UI/tree/main/specification/v0_9)
 **Current State:** Partial — v0.9 message names, v0.9 property names for implemented components
-**Implementation Version:** 0.2.0-preview
-**Last Updated:** 2026-02-10
+**Implementation Version:** 0.3.0-preview
+**Last Updated:** 2026-02-11
 
 This document tracks A2UI Blazor's compliance with the official A2UI protocol specification. Full compliance with the target specification is the goal.
 
@@ -47,7 +47,7 @@ v0.10 evolution guide is still TBD, but new documents include:
 | Delete surface | ✅ | `deleteSurface` | `deleteSurface` | same | Unchanged across versions |
 | Render buffering | ✅ | Required | Required | TBD | Buffer until root component arrives; single flush event |
 
-**Gaps:** We do not implement `catalogId` or `theme` on `createSurface`.
+**Gaps:** None for implemented messages. `catalogId` and `theme` are parsed and stored; CSS theming is not yet applied.
 
 ---
 
@@ -58,7 +58,7 @@ v0.10 evolution guide is still TBD, but new documents include:
 | `userAction` payload | ✅ | ✅ | ✅ | same | v0.9 envelope: `{version, action}` per `client_to_server.json` |
 | v0.9 message envelope | ✅ | N/A | ✅ | same | `{version: "v0.9", action: {...}}` with ISO 8601 timestamp |
 | `a2uiClientCapabilities` | ✅ | N/A | ✅ | same | Sent via `A2UI-Client-Capabilities` HTTP header |
-| `sendDataModel` sync | ❌ | N/A | ❌ | TBD | **Gap** — v0.9 requires sending data model back with actions |
+| `sendDataModel` sync | ✅ | N/A | ✅ | TBD | Data model echoed in client→server envelope when `sendDataModel: true` |
 | `error` message type | ❌ | ❌ | ❌ | TBD | **Gap** — client→server error reporting |
 | Custom functions | N/A | N/A | N/A | 📋 | v0.10 feature — developer-defined extensions |
 
@@ -71,9 +71,10 @@ v0.10 evolution guide is still TBD, but new documents include:
     "name": "submit",
     "surfaceId": "main",
     "sourceComponentId": "submit-btn",
-    "timestamp": "2026-02-10T12:00:00.000+00:00",
+    "timestamp": "2026-02-11T12:00:00.000+00:00",
     "context": {}
-  }
+  },
+  "dataModel": { "count": 5 }
 }
 ```
 
@@ -169,8 +170,8 @@ This table tracks which property names we use vs what each spec version expects.
 | Component tree rendering | ✅ | ✅ | ✅ | same | |
 | Dynamic component registry | ✅ | ✅ | ✅ | same | |
 | Action context resolution | ✅ | ✅ | ✅ | same | |
-| Catalog ID in `createSurface` | ❌ | N/A | ❌ | same | **Gap** — v0.9 requires parsing `catalogId` |
-| Theme support | ❌ | N/A | ❌ | same | **Gap** — v0.9 requires `primaryColor` etc. |
+| Catalog ID in `createSurface` | ✅ | N/A | ✅ | same | Parsed and stored on surface state |
+| Theme in `createSurface` | ✅ | N/A | ✅ | same | Parsed and stored; CSS application is future work |
 | Custom functions | N/A | N/A | N/A | 📋 | v0.10 feature |
 | Extension catalogs | N/A | N/A | N/A | 📋 | v0.10 feature |
 
@@ -204,12 +205,14 @@ This table tracks which property names we use vs what each spec version expects.
    - Type coercion: null → `""`, numbers/bools → string, objects/arrays → JSON
    - Escape support: `\${` → literal `${`
 
-5. **`sendDataModel` Sync** (❌ v0.9 gap)
-   - Echo data model in client→server messages when `sendDataModel: true`
+5. ~~**`sendDataModel` Sync**~~ ✅ Done
+   - Data model echoed in client→server envelope when `sendDataModel: true`
+   - Omitted from envelope when flag is false or data model is null
 
-6. **Catalog & Theme Support** (❌ v0.9 gap)
-   - Parse `catalogId` from `createSurface`
-   - Parse and apply `theme` properties
+6. ~~**Catalog & Theme Support**~~ ✅ Done
+   - `catalogId` parsed from `createSurface` and stored on surface state
+   - `theme` parsed from `createSurface` and stored on surface state
+   - CSS theming (applying colors) is future work
 
 ### Low Priority (v0.10 / Future)
 

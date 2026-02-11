@@ -98,6 +98,22 @@ public class MessageDispatcherTests
     }
 
     [Fact]
+    public void Dispatch_CreateSurface_PassesTheme()
+    {
+        var theme = JsonDocument.Parse("""{"primaryColor":"#FF0000"}""").RootElement;
+        _dispatcher.Dispatch(new A2UIMessage
+        {
+            Type = "createSurface",
+            SurfaceId = "s1",
+            Theme = theme
+        });
+
+        var surface = _manager.GetSurface("s1");
+        Assert.NotNull(surface!.Theme);
+        Assert.Equal("#FF0000", surface.Theme.Value.GetProperty("primaryColor").GetString());
+    }
+
+    [Fact]
     public void Dispatch_FullSequence_CreatesRenderableSurface()
     {
         // Simulate the exact message sequence the Python server sends

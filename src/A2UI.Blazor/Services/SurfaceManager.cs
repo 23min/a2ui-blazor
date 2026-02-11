@@ -30,13 +30,14 @@ public sealed class SurfaceManager
 
     public IReadOnlyCollection<string> GetSurfaceIds() => _surfaces.Keys;
 
-    public void CreateSurface(string surfaceId, string? catalogId, bool sendDataModel)
+    public void CreateSurface(string surfaceId, string? catalogId, bool sendDataModel, JsonElement? theme = null)
     {
         _logger.LogInformation(LogEvents.SurfaceCreated, "Creating surface {SurfaceId} with catalogId {CatalogId}", surfaceId, catalogId);
         var surface = new A2UISurfaceState(surfaceId)
         {
             CatalogId = catalogId,
-            SendDataModel = sendDataModel
+            SendDataModel = sendDataModel,
+            Theme = theme
         };
         _surfaces[surfaceId] = surface;
     }

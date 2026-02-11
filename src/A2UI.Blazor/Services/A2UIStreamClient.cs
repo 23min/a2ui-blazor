@@ -17,17 +17,19 @@ public sealed class A2UIStreamClient : IDisposable
     private readonly HttpClient _http;
     private readonly JsonlStreamReader _reader;
     private readonly MessageDispatcher _dispatcher;
+    private readonly SurfaceManager _surfaceManager;
     private readonly ILogger<A2UIStreamClient> _logger;
     private CancellationTokenSource? _cts;
 
     private const int MaxDelayMs = 30_000;
     private const int BaseDelayMs = 1_000;
 
-    public A2UIStreamClient(HttpClient http, JsonlStreamReader reader, MessageDispatcher dispatcher, ILogger<A2UIStreamClient> logger)
+    public A2UIStreamClient(HttpClient http, JsonlStreamReader reader, MessageDispatcher dispatcher, SurfaceManager surfaceManager, ILogger<A2UIStreamClient> logger)
     {
         _http = http;
         _reader = reader;
         _dispatcher = dispatcher;
+        _surfaceManager = surfaceManager;
         _logger = logger;
     }
 
@@ -136,6 +138,10 @@ public sealed class A2UIStreamClient : IDisposable
             _logger.LogDebug(LogEvents.SendingAction, "Sending action {ActionName} to {AgentPath}", action.Name, agentPath);
 
             var envelope = new A2UIClientMessage { Action = action };
+
+            if (_surfaceManager.GetSurface(action.SurfaceId) is { SendDataModel: true, DataModel: not null } surface)
+                envelope.DataModel = surface.DataModel.RootElement;
+
             var request = new HttpRequestMessage(HttpMethod.Post, agentPath);
             request.Content = JsonContent.Create(envelope);
             request.Headers.Add("A2UI-Client-Capabilities", s_capabilitiesJson);

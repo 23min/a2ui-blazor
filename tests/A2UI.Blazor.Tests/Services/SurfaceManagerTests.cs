@@ -286,4 +286,26 @@ public class SurfaceManagerTests
         _manager.CreateSurface("s1", null, false);
         Assert.Null(_manager.ResolveBinding("s1", "/x"));
     }
+
+    // ── Theme ─────────────────────────────────────────────────────────
+
+    [Fact]
+    public void CreateSurface_StoresTheme()
+    {
+        var theme = Parse("""{"primaryColor":"#2196F3"}""");
+        _manager.CreateSurface("s1", null, false, theme);
+        var surface = _manager.GetSurface("s1");
+
+        Assert.NotNull(surface!.Theme);
+        Assert.Equal("#2196F3", surface.Theme.Value.GetProperty("primaryColor").GetString());
+    }
+
+    [Fact]
+    public void CreateSurface_NullTheme_StoresNull()
+    {
+        _manager.CreateSurface("s1", null, false, null);
+        var surface = _manager.GetSurface("s1");
+
+        Assert.Null(surface!.Theme);
+    }
 }

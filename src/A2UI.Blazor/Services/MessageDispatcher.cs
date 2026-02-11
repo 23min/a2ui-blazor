@@ -54,7 +54,8 @@ public sealed class MessageDispatcher
         _surfaceManager.CreateSurface(
             message.SurfaceId,
             message.CatalogId,
-            message.SendDataModel ?? false);
+            message.SendDataModel ?? false,
+            message.Theme);
     }
 
     private void HandleUpdateComponents(A2UIMessage message)
