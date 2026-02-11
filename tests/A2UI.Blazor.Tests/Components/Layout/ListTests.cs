@@ -138,5 +138,64 @@ public class ListTests : IDisposable
         Assert.Contains("Fallback", cut.Markup);
     }
 
+    [Fact]
+    public void List_RendersUlElement()
+    {
+        var surface = _ctx.SetupSurface("s", [
+            SurfaceTestContext.MakeComponent("list", "List", new()
+            {
+                ["children"] = new[] { "c1" }
+            }),
+            SurfaceTestContext.MakeComponent("c1", "Text", new() { ["text"] = "Item" })
+        ]);
+
+        var cut = _ctx.Render<A2UIList>(p => p
+            .Add(c => c.Data, surface.Components["list"])
+            .Add(c => c.Surface, surface));
+
+        var list = cut.Find(".a2ui-list");
+        Assert.Equal("UL", list.TagName);
+    }
+
+    [Fact]
+    public void List_RendersLiElements_ForChildren()
+    {
+        var surface = _ctx.SetupSurface("s", [
+            SurfaceTestContext.MakeComponent("list", "List", new()
+            {
+                ["children"] = new[] { "c1", "c2" }
+            }),
+            SurfaceTestContext.MakeComponent("c1", "Text", new() { ["text"] = "One" }),
+            SurfaceTestContext.MakeComponent("c2", "Text", new() { ["text"] = "Two" })
+        ]);
+
+        var cut = _ctx.Render<A2UIList>(p => p
+            .Add(c => c.Data, surface.Components["list"])
+            .Add(c => c.Surface, surface));
+
+        var items = cut.FindAll(".a2ui-list-item");
+        Assert.Equal(2, items.Count);
+        Assert.All(items, item => Assert.Equal("LI", item.TagName));
+    }
+
+    [Fact]
+    public void List_HasRoleList()
+    {
+        var surface = _ctx.SetupSurface("s", [
+            SurfaceTestContext.MakeComponent("list", "List", new()
+            {
+                ["children"] = new[] { "c1" }
+            }),
+            SurfaceTestContext.MakeComponent("c1", "Text", new() { ["text"] = "Item" })
+        ]);
+
+        var cut = _ctx.Render<A2UIList>(p => p
+            .Add(c => c.Data, surface.Components["list"])
+            .Add(c => c.Surface, surface));
+
+        var list = cut.Find(".a2ui-list");
+        Assert.Equal("list", list.GetAttribute("role"));
+    }
+
     public void Dispose() => _ctx.Dispose();
 }

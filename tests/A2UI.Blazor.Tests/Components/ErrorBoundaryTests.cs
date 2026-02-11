@@ -243,5 +243,68 @@ public class ErrorBoundaryTests : SurfaceTestContext
         Assert.Throws<Bunit.ElementNotFoundException>(() => cut.Find(".a2ui-component-error"));
         Assert.Throws<Bunit.ElementNotFoundException>(() => cut.Find(".a2ui-surface-error"));
     }
+
+    [Fact]
+    public void Surface_HasRegionRole()
+    {
+        var components = new List<A2UIComponentData>
+        {
+            SurfaceTestContext.MakeComponent("root", "Text", new Dictionary<string, object>
+            {
+                ["text"] = "Content",
+                ["variant"] = "body"
+            })
+        };
+
+        SetupSurface("test", components);
+
+        var cut = Render<A2UISurface>(parameters => parameters
+            .Add(p => p.SurfaceId, "test"));
+
+        var surface = cut.Find(".a2ui-surface");
+        Assert.Equal("region", surface.GetAttribute("role"));
+        Assert.NotNull(surface.GetAttribute("aria-label"));
+    }
+
+    [Fact]
+    public void Surface_Reconnecting_HasStatusRole()
+    {
+        var components = new List<A2UIComponentData>
+        {
+            SurfaceTestContext.MakeComponent("root", "Text", new Dictionary<string, object>
+            {
+                ["text"] = "Content",
+                ["variant"] = "body"
+            })
+        };
+
+        SetupSurface("test", components);
+
+        var cut = Render<A2UISurface>(parameters => parameters
+            .Add(p => p.SurfaceId, "test")
+            .Add(p => p.ConnectionState, StreamConnectionState.Reconnecting));
+
+        var overlay = cut.Find(".a2ui-surface-reconnecting");
+        Assert.Equal("status", overlay.GetAttribute("role"));
+    }
+
+    [Fact]
+    public void ComponentRenderer_Unknown_HasStatusRole()
+    {
+        var components = new List<A2UIComponentData>
+        {
+            new() { Id = "root", Component = "NonExistentComponent" }
+        };
+
+        var surface = SetupSurface("test", components);
+
+        var cut = Render<A2UIComponentRenderer>(parameters => parameters
+            .Add(p => p.Data, surface.GetRoot()!)
+            .Add(p => p.Surface, surface));
+
+        var unknown = cut.Find(".a2ui-component-unknown");
+        Assert.Equal("status", unknown.GetAttribute("role"));
+    }
+
 }
 
