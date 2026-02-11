@@ -38,6 +38,9 @@ public abstract class A2UIComponentBase : ComponentBase
             return ResolveStringBinding(val);
         }
 
+        if (element.ValueKind == JsonValueKind.Object)
+            return ResolveFunctionCall(element);
+
         return element.ToString();
     }
 
@@ -170,6 +173,33 @@ public abstract class A2UIComponentBase : ComponentBase
             if (id is not null) result.Add(id);
         }
         return result;
+    }
+
+    private string? ResolveFunctionCall(JsonElement element)
+    {
+        if (!element.TryGetProperty("call", out var callEl) ||
+            callEl.GetString() != "formatString")
+            return element.ToString();
+
+        if (!element.TryGetProperty("args", out var argsEl) ||
+            argsEl.ValueKind != JsonValueKind.Object)
+            return element.ToString();
+
+        if (!argsEl.TryGetProperty("value", out var valueEl) ||
+            valueEl.ValueKind != JsonValueKind.String)
+            return element.ToString();
+
+        var template = valueEl.GetString();
+        var resolver = new FormatStringResolver();
+
+        JsonElement? dataModelRoot = null;
+        if (SurfaceManager is not null)
+        {
+            var surface = SurfaceManager.GetSurface(Surface.SurfaceId);
+            dataModelRoot = surface?.DataModel?.RootElement;
+        }
+
+        return resolver.Resolve(template, dataModelRoot, ScopeElement);
     }
 
     private string? ResolveStringBinding(string? value)
