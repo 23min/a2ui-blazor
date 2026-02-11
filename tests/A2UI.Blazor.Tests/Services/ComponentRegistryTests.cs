@@ -4,6 +4,7 @@ using A2UI.Blazor.Components.Layout;
 using A2UI.Blazor.Components.Media;
 using A2UI.Blazor.Components.Visualization;
 using A2UI.Blazor.Services;
+using A2UI.Blazor.Tests.Helpers;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace A2UI.Blazor.Tests.Services;
@@ -71,5 +72,32 @@ public class ComponentRegistryTests
     {
         _registry.Register("Text", typeof(A2UIButton));
         Assert.Equal(typeof(A2UIButton), _registry.Resolve("Text"));
+    }
+
+    [Fact]
+    public void Resolve_SameUnknownType_WarnsOnlyOnce()
+    {
+        var logger = new WarningCounter<ComponentRegistry>();
+        var registry = new ComponentRegistry(logger);
+
+        registry.Resolve("FancyWidget");
+        registry.Resolve("FancyWidget");
+        registry.Resolve("FancyWidget");
+
+        Assert.Equal(1, logger.Count);
+    }
+
+    [Fact]
+    public void Resolve_DifferentUnknownTypes_WarnsEachOnce()
+    {
+        var logger = new WarningCounter<ComponentRegistry>();
+        var registry = new ComponentRegistry(logger);
+
+        registry.Resolve("FancyWidget");
+        registry.Resolve("SuperWidget");
+        registry.Resolve("FancyWidget");
+        registry.Resolve("SuperWidget");
+
+        Assert.Equal(2, logger.Count);
     }
 }

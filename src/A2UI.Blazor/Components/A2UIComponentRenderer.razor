@@ -48,6 +48,7 @@ else
     private Type? _componentType;
     private Dictionary<string, object>? _parameters;
     private ErrorBoundary? _errorBoundary;
+    private string? _lastLoggedUnknown;
 
     protected override void OnParametersSet()
     {
@@ -76,7 +77,11 @@ else
 
     private string? LogUnknownComponent()
     {
-        Logger.LogWarning(LogEvents.ComponentNotFound, "Unknown component type {ComponentType}", Data.Component);
+        if (_lastLoggedUnknown != Data.Component)
+        {
+            _lastLoggedUnknown = Data.Component;
+            Logger.LogWarning(LogEvents.ComponentNotFound, "Unknown component type {ComponentType}", Data.Component);
+        }
         return null;
     }
 }

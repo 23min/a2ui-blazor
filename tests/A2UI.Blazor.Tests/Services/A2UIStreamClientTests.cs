@@ -264,6 +264,140 @@ public class A2UIStreamClientTests
         Assert.False(root.TryGetProperty("dataModel", out _));
     }
 
+    [Fact]
+    public async Task SendErrorAsync_SendsV09ErrorEnvelope()
+    {
+        string? capturedBody = null;
+        var client = CreateClient(async req =>
+        {
+            if (req.Method == HttpMethod.Post && req.Content is not null)
+                capturedBody = await req.Content.ReadAsStringAsync();
+            return OkResponse("");
+        });
+
+        var error = new A2UIClientError
+        {
+            Code = "VALIDATION_FAILED",
+            SurfaceId = "s1",
+            Message = "Expected string, got number"
+        };
+
+        await client.SendErrorAsync("/test", error);
+
+        Assert.NotNull(capturedBody);
+        var root = JsonDocument.Parse(capturedBody).RootElement;
+        Assert.Equal("v0.9", root.GetProperty("version").GetString());
+        Assert.True(root.TryGetProperty("error", out var errorEl));
+        Assert.Equal("VALIDATION_FAILED", errorEl.GetProperty("code").GetString());
+        Assert.Equal("s1", errorEl.GetProperty("surfaceId").GetString());
+        Assert.False(root.TryGetProperty("action", out _));
+    }
+
+    [Fact]
+    public async Task SendErrorAsync_IncludesCapabilitiesHeader()
+    {
+        string? headerValue = null;
+        var client = CreateClient(req =>
+        {
+            if (req.Method == HttpMethod.Post &&
+                req.Headers.TryGetValues("A2UI-Client-Capabilities", out var values))
+            {
+                headerValue = values.FirstOrDefault();
+            }
+            return Task.FromResult(OkResponse(""));
+        });
+
+        await client.SendErrorAsync("/test", new A2UIClientError
+        {
+            Code = "TEST", SurfaceId = "s1", Message = "test"
+        });
+
+        Assert.NotNull(headerValue);
+        var doc = JsonDocument.Parse(headerValue);
+        Assert.True(doc.RootElement.TryGetProperty("v0.9", out _));
+    }
+
+    [Fact]
+    public async Task SendErrorAsync_IncludesPath_ForValidationError()
+    {
+        string? capturedBody = null;
+        var client = CreateClient(async req =>
+        {
+            if (req.Method == HttpMethod.Post && req.Content is not null)
+                capturedBody = await req.Content.ReadAsStringAsync();
+            return OkResponse("");
+        });
+
+        await client.SendErrorAsync("/test", new A2UIClientError
+        {
+            Code = "VALIDATION_FAILED",
+            SurfaceId = "s1",
+            Message = "bad",
+            Path = "/components/0/text"
+        });
+
+        Assert.NotNull(capturedBody);
+        var errorEl = JsonDocument.Parse(capturedBody).RootElement.GetProperty("error");
+        Assert.Equal("/components/0/text", errorEl.GetProperty("path").GetString());
+    }
+
+    [Fact]
+    public async Task SendErrorAsync_OmitsPath_WhenNull()
+    {
+        string? capturedBody = null;
+        var client = CreateClient(async req =>
+        {
+            if (req.Method == HttpMethod.Post && req.Content is not null)
+                capturedBody = await req.Content.ReadAsStringAsync();
+            return OkResponse("");
+        });
+
+        await client.SendErrorAsync("/test", new A2UIClientError
+        {
+            Code = "GENERIC", SurfaceId = "s1", Message = "oops"
+        });
+
+        Assert.NotNull(capturedBody);
+        var errorEl = JsonDocument.Parse(capturedBody).RootElement.GetProperty("error");
+        Assert.False(errorEl.TryGetProperty("path", out _));
+    }
+
+    [Fact]
+    public async Task SendErrorAsync_ProcessesResponseStream()
+    {
+        var jsonl = """{"type":"createSurface","surfaceId":"ack"}""" + "\n";
+        var (client, manager) = CreateClientWithManager(_ => Task.FromResult(OkResponse(jsonl)));
+
+        await client.SendErrorAsync("/test", new A2UIClientError
+        {
+            Code = "TEST", SurfaceId = "s1", Message = "test"
+        });
+
+        Assert.NotNull(manager.GetSurface("ack"));
+    }
+
+    [Fact]
+    public async Task Dispose_CalledTwice_AfterConnect_DoesNotThrow()
+    {
+        var jsonl = """{"type":"createSurface","surfaceId":"s1"}""" + "\n";
+        var client = CreateClient(_ => Task.FromResult(OkResponse(jsonl)));
+
+        client.OnStateChanged += s =>
+        {
+            if (s == StreamConnectionState.Connected)
+                client.Disconnect();
+        };
+
+        await client.ConnectAsync("/test");
+
+        // First dispose cancels and disposes the CTS
+        client.Dispose();
+
+        // Second dispose must not throw ObjectDisposedException
+        var ex = Record.Exception(() => client.Dispose());
+        Assert.Null(ex);
+    }
+
     // --- Helpers ---
 
     private static A2UIStreamClient CreateClient(Func<HttpRequestMessage, Task<HttpResponseMessage>> handler)

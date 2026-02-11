@@ -163,6 +163,35 @@ public sealed class A2UIStreamClient : IDisposable
         }
     }
 
+    public async Task SendErrorAsync(string agentPath, A2UIClientError error)
+    {
+        try
+        {
+            _logger.LogDebug(LogEvents.SendingError, "Sending error {ErrorCode} to {AgentPath}", error.Code, agentPath);
+
+            var envelope = new A2UIClientMessage { Error = error };
+
+            var request = new HttpRequestMessage(HttpMethod.Post, agentPath);
+            request.Content = JsonContent.Create(envelope);
+            request.Headers.Add("A2UI-Client-Capabilities", s_capabilitiesJson);
+            EnableBrowserStreaming(request);
+
+            var response = await _http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+
+            var stream = await response.Content.ReadAsStreamAsync();
+            await foreach (var message in _reader.ReadMessagesAsync(stream, CancellationToken.None))
+            {
+                _dispatcher.Dispatch(message);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(LogEvents.ErrorReportFailed, ex, "Failed to send error {ErrorCode} to {AgentPath}", error.Code, agentPath);
+            throw;
+        }
+    }
+
     public void Disconnect()
     {
         _cts?.Cancel();
@@ -170,7 +199,8 @@ public sealed class A2UIStreamClient : IDisposable
 
     public void Dispose()
     {
-        _cts?.Cancel();
+        try { _cts?.Cancel(); }
+        catch (ObjectDisposedException) { }
         _cts?.Dispose();
     }
 

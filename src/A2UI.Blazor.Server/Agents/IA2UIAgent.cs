@@ -23,6 +23,12 @@ public interface IA2UIAgent
     /// Handle a user action from the client.
     /// </summary>
     Task HandleActionAsync(A2UIStreamWriter writer, UserActionRequest action, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Handle a client error report. Default implementation does nothing.
+    /// </summary>
+    Task HandleErrorAsync(A2UIStreamWriter writer, ClientErrorRequest error, CancellationToken cancellationToken)
+        => Task.CompletedTask;
 }
 
 /// <summary>
@@ -35,4 +41,15 @@ public sealed class UserActionRequest
     public string SourceComponentId { get; set; } = string.Empty;
     public string Timestamp { get; set; } = string.Empty;
     public Dictionary<string, object?>? Context { get; set; }
+}
+
+/// <summary>
+/// Represents a client error report received from the client.
+/// </summary>
+public sealed class ClientErrorRequest
+{
+    public string Code { get; set; } = string.Empty;
+    public string SurfaceId { get; set; } = string.Empty;
+    public string Message { get; set; } = string.Empty;
+    public string? Path { get; set; }
 }

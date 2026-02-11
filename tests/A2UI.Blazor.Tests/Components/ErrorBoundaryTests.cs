@@ -3,6 +3,8 @@ using A2UI.Blazor.Protocol;
 using A2UI.Blazor.Services;
 using A2UI.Blazor.Tests.Helpers;
 using Bunit;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace A2UI.Blazor.Tests.Components;
 
@@ -192,6 +194,30 @@ public class ErrorBoundaryTests : SurfaceTestContext
         var unknownType = Registry.Resolve("CompletelyMadeUpComponentName");
 
         Assert.Null(unknownType);
+    }
+
+    [Fact]
+    public void Surface_UnknownComponent_LogsWarningOnlyOnce_AcrossUpdates()
+    {
+        var logger = new WarningCounter<A2UIComponentRenderer>();
+        Services.AddSingleton<ILogger<A2UIComponentRenderer>>(logger);
+
+        var components = new List<A2UIComponentData>
+        {
+            new() { Id = "root", Component = "NonExistentComponent" }
+        };
+
+        SetupSurface("log-once", components);
+
+        var cut = Render<A2UISurface>(parameters => parameters
+            .Add(p => p.SurfaceId, "log-once"));
+
+        // Trigger re-renders by updating the surface multiple times
+        SurfaceManager.UpdateComponents("log-once", components);
+        SurfaceManager.UpdateComponents("log-once", components);
+
+        // Should have warned only once despite multiple render passes
+        Assert.Equal(1, logger.Count);
     }
 
     [Fact]

@@ -15,6 +15,8 @@ internal static class LogEvents
     public const int StreamError = 1006;
     public const int SendingAction = 1010;
     public const int ActionFailed = 1011;
+    public const int SendingError = 1012;
+    public const int ErrorReportFailed = 1013;
 
     // MessageDispatcher (2000-2099)
     public const int UnknownMessageType = 2001;

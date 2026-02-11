@@ -80,6 +80,10 @@ The Blazor WASM SPA (`samples/blazor-wasm-spa`) and Blazor Server App (`samples/
 - Run `dotnet test` before committing
 - Do not commit unless explicitly asked
 
+### Killing Ports
+
+When asked to kill ports or fix "address already in use" errors, use `lsof -i :<port>` to find the process, then `kill <pid>`. Sample app ports: dotnet-server=5050, blazor-server-app=5100, blazor-wasm-spa=5200.
+
 ### Documentation
 
 - `SPECIFICATION.md` — A2UI protocol compliance matrix (root)
