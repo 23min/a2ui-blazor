@@ -1,4 +1,5 @@
 using A2UI.Blazor.Components.Display;
+using A2UI.Blazor.Services;
 using A2UI.Blazor.Tests.Helpers;
 
 namespace A2UI.Blazor.Tests.Components.Display;
@@ -112,6 +113,62 @@ public class TextTests : IDisposable
         });
 
         Assert.Contains("Hello World", cut.Markup);
+    }
+
+    [Fact]
+    public void Resolves_FormatString_ForText()
+    {
+        var surface = _ctx.SetupSurface("s",
+            [SurfaceTestContext.MakeComponent("root", "Text", new()
+            {
+                ["text"] = new { call = "formatString", args = new { value = "Hello, ${/user/name}!" } }
+            })],
+            new { user = new { name = "Alice" } });
+
+        var cut = _ctx.Render(builder =>
+        {
+            builder.OpenComponent<Microsoft.AspNetCore.Components.CascadingValue<SurfaceManager>>(0);
+            builder.AddAttribute(1, "Value", _ctx.SurfaceManager);
+            builder.AddAttribute(2, "ChildContent",
+                (Microsoft.AspNetCore.Components.RenderFragment)(b2 =>
+                {
+                    b2.OpenComponent<A2UIText>(0);
+                    b2.AddAttribute(1, "Data", surface.Components["root"]);
+                    b2.AddAttribute(2, "Surface", surface);
+                    b2.CloseComponent();
+                }));
+            builder.CloseComponent();
+        });
+
+        Assert.Contains("Hello, Alice!", cut.Markup);
+    }
+
+    [Fact]
+    public void FormatString_WithMissingData_RendersPartialText()
+    {
+        var surface = _ctx.SetupSurface("s",
+            [SurfaceTestContext.MakeComponent("root", "Text", new()
+            {
+                ["text"] = new { call = "formatString", args = new { value = "Hello, ${/missing}!" } }
+            })],
+            new { other = "data" });
+
+        var cut = _ctx.Render(builder =>
+        {
+            builder.OpenComponent<Microsoft.AspNetCore.Components.CascadingValue<SurfaceManager>>(0);
+            builder.AddAttribute(1, "Value", _ctx.SurfaceManager);
+            builder.AddAttribute(2, "ChildContent",
+                (Microsoft.AspNetCore.Components.RenderFragment)(b2 =>
+                {
+                    b2.OpenComponent<A2UIText>(0);
+                    b2.AddAttribute(1, "Data", surface.Components["root"]);
+                    b2.AddAttribute(2, "Surface", surface);
+                    b2.CloseComponent();
+                }));
+            builder.CloseComponent();
+        });
+
+        Assert.Contains("Hello, !", cut.Markup);
     }
 
     public void Dispose() => _ctx.Dispose();

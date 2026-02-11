@@ -155,7 +155,7 @@ This table tracks which property names we use vs what each spec version expects.
 | Path-based binding | ✅ | ✅ | ✅ | same | JSON Pointer (RFC 6901) |
 | Combined literal + path | ✅ | ✅ | ✅ | same | |
 | List iteration | ✅ | ✅ | ✅ | same | |
-| `formatString` interpolation | ❌ | N/A | ❌ | same | **Gap** — v0.9 requires `${expression}` syntax |
+| `formatString` interpolation | ✅ | N/A | ✅ | same | `${/path}` and `${relativePath}` expressions; type coercion per spec |
 
 ---
 
@@ -199,8 +199,10 @@ This table tracks which property names we use vs what each spec version expects.
 
 ### Medium Priority (v0.9 gaps)
 
-4. **`formatString` Interpolation** (❌ v0.9 gap)
-   - Support `${expression}` syntax in bound values
+4. ~~**`formatString` Interpolation**~~ ✅ Done
+   - `${/absolute/path}` and `${relativePath}` expressions in `formatString` FunctionCall
+   - Type coercion: null → `""`, numbers/bools → string, objects/arrays → JSON
+   - Escape support: `\${` → literal `${`
 
 5. **`sendDataModel` Sync** (❌ v0.9 gap)
    - Echo data model in client→server messages when `sendDataModel: true`

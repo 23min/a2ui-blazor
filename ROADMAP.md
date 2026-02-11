@@ -52,7 +52,7 @@ Close the gaps between our implementation and the A2UI v0.9 specification. See [
 
 ### Medium Priority
 
-- [ ] **`formatString` interpolation** — support `${expression}` syntax in bound values (#7)
+- [x] **`formatString` interpolation** — support `${expression}` syntax in bound values (#7)
 - [ ] **`sendDataModel` sync + catalog & theme support** — echo data model when `sendDataModel: true`, parse `catalogId` and `theme` from `createSurface` (#8)
 - [ ] **Client error reporting** — send client-side errors to server via `error` message type (#9)
 
