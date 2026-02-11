@@ -5,7 +5,7 @@
 @implements IDisposable
 
 <CascadingValue Value="SurfaceManagerService" IsFixed="true">
-    <div class="a2ui-surface" data-surface-id="@SurfaceId">
+    <div class="a2ui-surface" data-surface-id="@SurfaceId" role="region" aria-label="A2UI Surface">
         <ErrorBoundary @ref="_surfaceErrorBoundary">
             <ChildContent>
                 @if (_surface?.GetRoot() is { } root)
@@ -30,7 +30,7 @@
         </ErrorBoundary>
         @if (ConnectionState == StreamConnectionState.Reconnecting)
         {
-            <div class="a2ui-surface-reconnecting">Reconnecting...</div>
+            <div class="a2ui-surface-reconnecting" role="status">Reconnecting...</div>
         }
     </div>
 </CascadingValue>

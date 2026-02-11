@@ -12,7 +12,7 @@
         </ChildContent>
         <ErrorContent Context="ex">
             @(LogComponentError(ex))
-            <div class="a2ui-component-error" title="@ex.Message">
+            <div class="a2ui-component-error" role="alert" title="@ex.Message">
                 Component "@Data.Component" failed to render
             </div>
         </ErrorContent>
@@ -21,7 +21,7 @@
 else
 {
     @(LogUnknownComponent())
-    <div class="a2ui-component-unknown">
+    <div class="a2ui-component-unknown" role="status">
         Unknown component: @Data.Component
     </div>
 }

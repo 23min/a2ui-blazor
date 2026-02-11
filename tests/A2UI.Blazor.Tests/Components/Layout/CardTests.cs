@@ -65,5 +65,25 @@ public class CardTests : IDisposable
         Assert.Throws<Bunit.ElementNotFoundException>(() => cut.Find(".a2ui-card-header"));
     }
 
+    [Fact]
+    public void Card_RendersArticleElement()
+    {
+        var surface = _ctx.SetupSurface("s", [
+            SurfaceTestContext.MakeComponent("card", "Card", new()
+            {
+                ["title"] = "Test",
+                ["children"] = new[] { "c1" }
+            }),
+            SurfaceTestContext.MakeComponent("c1", "Text", new() { ["text"] = "Content" })
+        ]);
+
+        var cut = _ctx.Render<A2UICard>(p => p
+            .Add(c => c.Data, surface.Components["card"])
+            .Add(c => c.Surface, surface));
+
+        var card = cut.Find(".a2ui-card");
+        Assert.Equal("ARTICLE", card.TagName);
+    }
+
     public void Dispose() => _ctx.Dispose();
 }

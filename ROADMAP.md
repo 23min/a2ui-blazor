@@ -64,7 +64,7 @@ Meet WCAG 2.1 AA and support visual customization.
 
 - [ ] **Accessible forms** — proper `<label>` / `for` associations, `aria-describedby`, `aria-invalid`
 - [ ] **Keyboard navigation** — visible `:focus-visible` rings on all interactive components
-- [ ] **Semantic HTML** — `<ul>` / `<li>` in List, landmark roles where appropriate
+- [x] **Semantic HTML** — `<ul>` / `<li>` in List, `<article>` for Card, landmark roles (`role="region"` on Surface, `role="status"`/`role="alert"` on error states)
 - [ ] **Dark mode** — `prefers-color-scheme` media query with automatic light/dark switching
 - [ ] **CSS custom property theming** — document how consumers can override `--a2ui-*` variables
 - [ ] **`prefers-reduced-motion`** — respect user motion preferences for transitions

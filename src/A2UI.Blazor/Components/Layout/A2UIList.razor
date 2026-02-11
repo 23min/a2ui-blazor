@@ -18,7 +18,7 @@
             : null;
 }
 
-<div class="a2ui-list">
+<ul class="a2ui-list" role="list">
     @if (dataPath is not null && templateComponentId is not null && SurfaceManager is not null)
     {
         var items = SurfaceManager.ResolveBinding(Surface.SurfaceId, dataPath);
@@ -30,9 +30,9 @@
                 if (Surface.Components.TryGetValue(templateComponentId, out var templateComp))
                 {
                     <CascadingValue Value="@item" Name="ScopeElement">
-                        <div class="a2ui-list-item" @key="index">
+                        <li class="a2ui-list-item" @key="index">
                             <A2UIComponentRenderer Data="templateComp" Surface="Surface" OnAction="OnAction" />
-                        </div>
+                        </li>
                     </CascadingValue>
                 }
                 index++;
@@ -47,13 +47,13 @@
         {
             if (Surface.Components.TryGetValue(childId, out var child))
             {
-                <div class="a2ui-list-item">
+                <li class="a2ui-list-item">
                     <A2UIComponentRenderer Data="child" Surface="Surface" OnAction="OnAction" />
-                </div>
+                </li>
             }
         }
     }
-</div>
+</ul>
 
 @code {
     [Parameter]
