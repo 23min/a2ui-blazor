@@ -83,13 +83,23 @@ public sealed class A2UILocalAction
 }
 
 /// <summary>
-/// A user action sent from client to server.
+/// v0.9 client-to-server message envelope.
+/// Contains exactly two fields: version and action (per client_to_server.json schema).
+/// </summary>
+public sealed class A2UIClientMessage
+{
+    [JsonPropertyName("version")]
+    public string Version { get; set; } = "v0.9";
+
+    [JsonPropertyName("action")]
+    public A2UIUserAction? Action { get; set; }
+}
+
+/// <summary>
+/// A user action sent from client to server (inner payload of A2UIClientMessage).
 /// </summary>
 public sealed class A2UIUserAction
 {
-    [JsonPropertyName("type")]
-    public string Type { get; set; } = "action";
-
     [JsonPropertyName("name")]
     public string Name { get; set; } = string.Empty;
 
@@ -100,8 +110,27 @@ public sealed class A2UIUserAction
     public string SourceComponentId { get; set; } = string.Empty;
 
     [JsonPropertyName("timestamp")]
-    public long Timestamp { get; set; } = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+    public string Timestamp { get; set; } = DateTimeOffset.UtcNow.ToString("o");
 
     [JsonPropertyName("context")]
-    public Dictionary<string, object?>? Context { get; set; }
+    public Dictionary<string, object?> Context { get; set; } = new();
+}
+
+/// <summary>
+/// Client capabilities declared to the server via transport metadata.
+/// Sent as A2UI-Client-Capabilities HTTP header on every action POST.
+/// </summary>
+public sealed class A2UIClientCapabilities
+{
+    [JsonPropertyName("v0.9")]
+    public A2UICapabilitiesV09 V09 { get; set; } = new();
+}
+
+public sealed class A2UICapabilitiesV09
+{
+    [JsonPropertyName("supportedCatalogIds")]
+    public List<string> SupportedCatalogIds { get; set; } =
+    [
+        "https://github.com/google/A2UI/blob/main/specification/v0_9/json/standard_catalog.json"
+    ];
 }

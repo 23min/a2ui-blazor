@@ -33,5 +33,6 @@ public sealed class UserActionRequest
     public string Name { get; set; } = string.Empty;
     public string SurfaceId { get; set; } = string.Empty;
     public string SourceComponentId { get; set; } = string.Empty;
+    public string Timestamp { get; set; } = string.Empty;
     public Dictionary<string, object?>? Context { get; set; }
 }

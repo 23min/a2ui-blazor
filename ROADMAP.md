@@ -46,8 +46,8 @@ Close the gaps between our implementation and the A2UI v0.9 specification. See [
 
 ### High Priority
 
-- [ ] **A2A message envelope + client capabilities** — wrap `userAction` in A2A message structure, declare `a2uiClientCapabilities` with supported catalog IDs (#4)
-- [ ] **Property name migration to v0.9** — migrate 7 components from v0.8 names: `usageHint` → `variant`, `distribution` → `justify`, `alignment` → `align`, `entryPointChild`/`contentChild` → `trigger`/`content`, `text` → `value`, `textFieldType` → `variant`, `selections` → `value` (#5)
+- [x] **A2A message envelope + client capabilities** — v0.9 `{version, action}` envelope, `A2UI-Client-Capabilities` header, ISO 8601 timestamps (#4)
+- [x] **Property name migration to v0.9** — `usageHint` → `variant`, `distribution` → `justify`, `alignment` → `align` (#5)
 - [ ] **Render buffering** — buffer messages until explicit render signal instead of rendering immediately on `createSurface` (#6)
 
 ### Medium Priority

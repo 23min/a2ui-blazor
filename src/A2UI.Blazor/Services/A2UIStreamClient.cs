@@ -1,8 +1,9 @@
+using System.Net;
+using System.Net.Http.Json;
+using System.Text.Json;
 using A2UI.Blazor.Diagnostics;
 using A2UI.Blazor.Protocol;
 using Microsoft.Extensions.Logging;
-using System.Net;
-using System.Net.Http.Json;
 
 namespace A2UI.Blazor.Services;
 
@@ -125,14 +126,19 @@ public sealed class A2UIStreamClient : IDisposable
         SetState(StreamConnectionState.Disconnected);
     }
 
+    private static readonly string s_capabilitiesJson =
+        JsonSerializer.Serialize(new A2UIClientCapabilities());
+
     public async Task SendActionAsync(string agentPath, A2UIUserAction action)
     {
         try
         {
             _logger.LogDebug(LogEvents.SendingAction, "Sending action {ActionName} to {AgentPath}", action.Name, agentPath);
 
+            var envelope = new A2UIClientMessage { Action = action };
             var request = new HttpRequestMessage(HttpMethod.Post, agentPath);
-            request.Content = JsonContent.Create(action);
+            request.Content = JsonContent.Create(envelope);
+            request.Headers.Add("A2UI-Client-Capabilities", s_capabilitiesJson);
             EnableBrowserStreaming(request);
 
             var response = await _http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);

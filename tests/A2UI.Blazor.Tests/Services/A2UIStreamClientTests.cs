@@ -1,5 +1,7 @@
 using System.Net;
 using System.Text;
+using System.Text.Json;
+using A2UI.Blazor.Protocol;
 using A2UI.Blazor.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -149,6 +151,65 @@ public class A2UIStreamClientTests
         // (we can't call SetState directly since it's private, but this validates
         // the initial state)
         Assert.Equal(0, fireCount);
+    }
+
+    [Fact]
+    public async Task SendActionAsync_SendsV09Envelope()
+    {
+        string? capturedBody = null;
+        var client = CreateClient(async req =>
+        {
+            if (req.Method == HttpMethod.Post && req.Content is not null)
+            {
+                capturedBody = await req.Content.ReadAsStringAsync();
+            }
+            return OkResponse("");
+        });
+
+        var action = new A2UIUserAction
+        {
+            Name = "search",
+            SurfaceId = "contacts",
+            SourceComponentId = "search-btn"
+        };
+
+        await client.SendActionAsync("/agents/contacts", action);
+
+        Assert.NotNull(capturedBody);
+        var doc = JsonDocument.Parse(capturedBody);
+        var root = doc.RootElement;
+
+        Assert.Equal("v0.9", root.GetProperty("version").GetString());
+        Assert.True(root.TryGetProperty("action", out var actionEl));
+        Assert.Equal("search", actionEl.GetProperty("name").GetString());
+    }
+
+    [Fact]
+    public async Task SendActionAsync_IncludesCapabilitiesHeader()
+    {
+        string? headerValue = null;
+        var client = CreateClient(req =>
+        {
+            if (req.Method == HttpMethod.Post &&
+                req.Headers.TryGetValues("A2UI-Client-Capabilities", out var values))
+            {
+                headerValue = values.FirstOrDefault();
+            }
+            return Task.FromResult(OkResponse(""));
+        });
+
+        var action = new A2UIUserAction
+        {
+            Name = "test",
+            SurfaceId = "s1",
+            SourceComponentId = "c1"
+        };
+
+        await client.SendActionAsync("/test", action);
+
+        Assert.NotNull(headerValue);
+        var doc = JsonDocument.Parse(headerValue);
+        Assert.True(doc.RootElement.TryGetProperty("v0.9", out _));
     }
 
     // --- Helpers ---
