@@ -8,6 +8,7 @@ public sealed class SurfaceBuilder
     private readonly string _surfaceId;
     private string? _catalogId;
     private bool _sendDataModel;
+    private object? _theme;
     private readonly List<ComponentBuilder> _components = new();
 
     public SurfaceBuilder(string surfaceId)
@@ -24,6 +25,12 @@ public sealed class SurfaceBuilder
     public SurfaceBuilder SendDataModel(bool send = true)
     {
         _sendDataModel = send;
+        return this;
+    }
+
+    public SurfaceBuilder Theme(object theme)
+    {
+        _theme = theme;
         return this;
     }
 
@@ -44,6 +51,7 @@ public sealed class SurfaceBuilder
     public string SurfaceId => _surfaceId;
     public string? CatalogIdValue => _catalogId;
     public bool SendDataModelValue => _sendDataModel;
+    public object? ThemeValue => _theme;
 
     public List<Dictionary<string, object>> BuildComponents()
     {

@@ -26,6 +26,11 @@ public sealed class A2UISurfaceState
     public bool SendDataModel { get; set; }
 
     /// <summary>
+    /// Theme properties from the createSurface message (e.g., primaryColor).
+    /// </summary>
+    public JsonElement? Theme { get; set; }
+
+    /// <summary>
     /// Whether the surface has received its root component and is ready to render.
     /// Before this is true, updates are buffered (no change events fired).
     /// </summary>

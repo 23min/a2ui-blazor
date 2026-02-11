@@ -212,9 +212,68 @@ public class A2UIStreamClientTests
         Assert.True(doc.RootElement.TryGetProperty("v0.9", out _));
     }
 
+    [Fact]
+    public async Task SendActionAsync_IncludesDataModel_WhenSendDataModelTrue()
+    {
+        string? capturedBody = null;
+        var (client, surfaceManager) = CreateClientWithManager(async req =>
+        {
+            if (req.Method == HttpMethod.Post && req.Content is not null)
+                capturedBody = await req.Content.ReadAsStringAsync();
+            return OkResponse("");
+        });
+
+        // Set up surface with sendDataModel=true and a data model
+        surfaceManager.CreateSurface("s1", null, true, null);
+        surfaceManager.UpdateDataModel("s1", "/", JsonDocument.Parse("""{"count":5}""").RootElement);
+        surfaceManager.UpdateComponents("s1", [new() { Id = "root", Component = "Column" }]);
+
+        await client.SendActionAsync("/test", new A2UIUserAction
+        {
+            Name = "click", SurfaceId = "s1", SourceComponentId = "btn1"
+        });
+
+        Assert.NotNull(capturedBody);
+        var root = JsonDocument.Parse(capturedBody).RootElement;
+        Assert.True(root.TryGetProperty("dataModel", out var dm));
+        Assert.Equal(5, dm.GetProperty("count").GetInt32());
+    }
+
+    [Fact]
+    public async Task SendActionAsync_OmitsDataModel_WhenSendDataModelFalse()
+    {
+        string? capturedBody = null;
+        var (client, surfaceManager) = CreateClientWithManager(async req =>
+        {
+            if (req.Method == HttpMethod.Post && req.Content is not null)
+                capturedBody = await req.Content.ReadAsStringAsync();
+            return OkResponse("");
+        });
+
+        surfaceManager.CreateSurface("s1", null, false, null);
+        surfaceManager.UpdateDataModel("s1", "/", JsonDocument.Parse("""{"x":1}""").RootElement);
+        surfaceManager.UpdateComponents("s1", [new() { Id = "root", Component = "Column" }]);
+
+        await client.SendActionAsync("/test", new A2UIUserAction
+        {
+            Name = "click", SurfaceId = "s1", SourceComponentId = "btn1"
+        });
+
+        Assert.NotNull(capturedBody);
+        var root = JsonDocument.Parse(capturedBody).RootElement;
+        Assert.False(root.TryGetProperty("dataModel", out _));
+    }
+
     // --- Helpers ---
 
     private static A2UIStreamClient CreateClient(Func<HttpRequestMessage, Task<HttpResponseMessage>> handler)
+    {
+        var (client, _) = CreateClientWithManager(handler);
+        return client;
+    }
+
+    private static (A2UIStreamClient Client, SurfaceManager Manager) CreateClientWithManager(
+        Func<HttpRequestMessage, Task<HttpResponseMessage>> handler)
     {
         var http = new HttpClient(new DelegateHandler(handler))
         {
@@ -224,7 +283,7 @@ public class A2UIStreamClientTests
         var dispatcher = new MessageDispatcher(manager, NullLogger<MessageDispatcher>.Instance);
         var reader = new JsonlStreamReader(NullLogger<JsonlStreamReader>.Instance);
         var logger = NullLogger<A2UIStreamClient>.Instance;
-        return new A2UIStreamClient(http, reader, dispatcher, logger);
+        return (new A2UIStreamClient(http, reader, dispatcher, manager, logger), manager);
     }
 
     private static HttpResponseMessage OkResponse(string body)

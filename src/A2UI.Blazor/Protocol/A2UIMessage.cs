@@ -84,7 +84,7 @@ public sealed class A2UILocalAction
 
 /// <summary>
 /// v0.9 client-to-server message envelope.
-/// Contains exactly two fields: version and action (per client_to_server.json schema).
+/// Contains version, action, and optionally the data model (when sendDataModel is true).
 /// </summary>
 public sealed class A2UIClientMessage
 {
@@ -93,6 +93,10 @@ public sealed class A2UIClientMessage
 
     [JsonPropertyName("action")]
     public A2UIUserAction? Action { get; set; }
+
+    [JsonPropertyName("dataModel")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public JsonElement? DataModel { get; set; }
 }
 
 /// <summary>

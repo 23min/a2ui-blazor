@@ -292,7 +292,7 @@ public class ErrorHandlingTests
         var dispatcher = new MessageDispatcher(manager, NullLogger<MessageDispatcher>.Instance);
         var reader = new JsonlStreamReader(NullLogger<JsonlStreamReader>.Instance);
         var logger = NullLogger<A2UIStreamClient>.Instance;
-        return new A2UIStreamClient(http, reader, dispatcher, logger);
+        return new A2UIStreamClient(http, reader, dispatcher, manager, logger);
     }
 
     private static HttpResponseMessage OkResponse(string body)

@@ -28,7 +28,8 @@ public sealed class A2UIStreamWriter
     public async Task WriteCreateSurfaceAsync(
         string surfaceId,
         string? catalogId = null,
-        bool sendDataModel = false)
+        bool sendDataModel = false,
+        object? theme = null)
     {
         var message = new Dictionary<string, object>
         {
@@ -37,6 +38,7 @@ public sealed class A2UIStreamWriter
         };
         if (catalogId is not null) message["catalogId"] = catalogId;
         if (sendDataModel) message["sendDataModel"] = true;
+        if (theme is not null) message["theme"] = theme;
         await WriteMessageAsync(message);
     }
 
@@ -86,7 +88,8 @@ public sealed class A2UIStreamWriter
         await WriteCreateSurfaceAsync(
             builder.SurfaceId,
             builder.CatalogIdValue,
-            builder.SendDataModelValue);
+            builder.SendDataModelValue,
+            builder.ThemeValue);
 
         var components = builder.BuildComponents();
         if (components.Count > 0)
