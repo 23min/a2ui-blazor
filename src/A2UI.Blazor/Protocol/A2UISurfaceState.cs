@@ -25,6 +25,12 @@ public sealed class A2UISurfaceState
     /// </summary>
     public bool SendDataModel { get; set; }
 
+    /// <summary>
+    /// Whether the surface has received its root component and is ready to render.
+    /// Before this is true, updates are buffered (no change events fired).
+    /// </summary>
+    public bool IsReady { get; set; }
+
     public A2UISurfaceState(string surfaceId)
     {
         SurfaceId = surfaceId;

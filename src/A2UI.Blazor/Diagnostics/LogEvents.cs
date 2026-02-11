@@ -23,6 +23,7 @@ internal static class LogEvents
     // SurfaceManager (3000-3099)
     public const int SurfaceCreated = 3000;
     public const int SurfaceDeleted = 3001;
+    public const int SurfaceReady = 3002;
     public const int UnknownSurface = 3005;
 
     // JsonlStreamReader (4000-4099)

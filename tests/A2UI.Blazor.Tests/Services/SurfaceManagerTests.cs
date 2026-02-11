@@ -25,14 +25,14 @@ public class SurfaceManagerTests
     }
 
     [Fact]
-    public void CreateSurface_FiresOnSurfaceChanged()
+    public void CreateSurface_DoesNotFireEvent()
     {
-        string? firedId = null;
-        _manager.OnSurfaceChanged += id => firedId = id;
+        int fireCount = 0;
+        _manager.OnSurfaceChanged += _ => fireCount++;
 
         _manager.CreateSurface("s1", null, false);
 
-        Assert.Equal("s1", firedId);
+        Assert.Equal(0, fireCount);
     }
 
     [Fact]
@@ -147,15 +147,29 @@ public class SurfaceManagerTests
     }
 
     [Fact]
-    public void UpdateDataModel_FiresEvent()
+    public void UpdateDataModel_BeforeReady_DoesNotFireEvent()
     {
         _manager.CreateSurface("s1", null, true);
-        string? firedId = null;
-        _manager.OnSurfaceChanged += id => firedId = id;
+        int fireCount = 0;
+        _manager.OnSurfaceChanged += _ => fireCount++;
 
-        _manager.UpdateDataModel("s1", "/", Parse("""{}"""));
+        _manager.UpdateDataModel("s1", "/", Parse("""{"name":"Alice"}"""));
 
-        Assert.Equal("s1", firedId);
+        Assert.Equal(0, fireCount);
+    }
+
+    [Fact]
+    public void UpdateDataModel_AfterReady_FiresEvent()
+    {
+        _manager.CreateSurface("s1", null, true);
+        _manager.UpdateComponents("s1", [new() { Id = "root", Component = "Column" }]);
+
+        int fireCount = 0;
+        _manager.OnSurfaceChanged += _ => fireCount++;
+
+        _manager.UpdateDataModel("s1", "/", Parse("""{"x":1}"""));
+
+        Assert.Equal(1, fireCount);
     }
 
     [Fact]
@@ -186,6 +200,76 @@ public class SurfaceManagerTests
         _manager.DeleteSurface("s1");
 
         Assert.Equal("s1", firedId);
+    }
+
+    // ── Render Buffering ───────────────────────────────────────────
+
+    [Fact]
+    public void UpdateComponents_WithRoot_SetsReadyAndFiresEvent()
+    {
+        _manager.CreateSurface("s1", null, false);
+        int fireCount = 0;
+        _manager.OnSurfaceChanged += _ => fireCount++;
+
+        _manager.UpdateComponents("s1", [new() { Id = "root", Component = "Column" }]);
+
+        Assert.Equal(1, fireCount);
+        Assert.True(_manager.GetSurface("s1")!.IsReady);
+    }
+
+    [Fact]
+    public void UpdateComponents_WithoutRoot_DoesNotFireEvent()
+    {
+        _manager.CreateSurface("s1", null, false);
+        int fireCount = 0;
+        _manager.OnSurfaceChanged += _ => fireCount++;
+
+        _manager.UpdateComponents("s1", [new() { Id = "child1", Component = "Text" }]);
+
+        Assert.Equal(0, fireCount);
+        Assert.False(_manager.GetSurface("s1")!.IsReady);
+    }
+
+    [Fact]
+    public void UpdateComponents_AfterReady_AlwaysFiresEvent()
+    {
+        _manager.CreateSurface("s1", null, false);
+        _manager.UpdateComponents("s1", [new() { Id = "root", Component = "Column" }]);
+
+        int fireCount = 0;
+        _manager.OnSurfaceChanged += _ => fireCount++;
+
+        _manager.UpdateComponents("s1", [new() { Id = "child1", Component = "Text" }]);
+
+        Assert.Equal(1, fireCount);
+    }
+
+    [Fact]
+    public void FullSequence_CreateDataComponents_FiresSingleEvent()
+    {
+        int fireCount = 0;
+        _manager.OnSurfaceChanged += _ => fireCount++;
+
+        _manager.CreateSurface("s1", null, true);
+        _manager.UpdateDataModel("s1", "/", Parse("""{"items":["a","b"]}"""));
+        _manager.UpdateComponents("s1", [
+            new() { Id = "root", Component = "Column" },
+            new() { Id = "title", Component = "Text" }
+        ]);
+
+        Assert.Equal(1, fireCount);
+    }
+
+    [Fact]
+    public void DeleteSurface_BeforeReady_StillFiresEvent()
+    {
+        _manager.CreateSurface("s1", null, false);
+        int fireCount = 0;
+        _manager.OnSurfaceChanged += _ => fireCount++;
+
+        _manager.DeleteSurface("s1");
+
+        Assert.Equal(1, fireCount);
     }
 
     // ── ResolveBinding ──────────────────────────────────────────────
