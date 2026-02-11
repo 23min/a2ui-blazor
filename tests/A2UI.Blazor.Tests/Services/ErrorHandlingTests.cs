@@ -256,6 +256,31 @@ public class ErrorHandlingTests
         Assert.Null(ex);
     }
 
+    // ── SendErrorAsync Error Handling ──────────────────────────
+
+    [Fact]
+    public async Task StreamClient_SendErrorAsync_NetworkError_Throws()
+    {
+        var client = CreateStreamClient(_ => throw new HttpRequestException("Network down"));
+
+        var error = new Protocol.A2UIClientError { Code = "TEST", SurfaceId = "s1", Message = "test" };
+
+        await Assert.ThrowsAsync<HttpRequestException>(() =>
+            client.SendErrorAsync("/test", error));
+    }
+
+    [Fact]
+    public async Task StreamClient_SendErrorAsync_ServerError_Throws()
+    {
+        var client = CreateStreamClient(_ =>
+            Task.FromResult(new HttpResponseMessage(System.Net.HttpStatusCode.InternalServerError)));
+
+        var error = new Protocol.A2UIClientError { Code = "TEST", SurfaceId = "s1", Message = "test" };
+
+        await Assert.ThrowsAsync<HttpRequestException>(() =>
+            client.SendErrorAsync("/test", error));
+    }
+
     // ── ComponentRegistry Error Handling ────────────────────────
 
     [Fact]

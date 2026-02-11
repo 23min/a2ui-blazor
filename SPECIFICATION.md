@@ -59,7 +59,7 @@ v0.10 evolution guide is still TBD, but new documents include:
 | v0.9 message envelope | ✅ | N/A | ✅ | same | `{version: "v0.9", action: {...}}` with ISO 8601 timestamp |
 | `a2uiClientCapabilities` | ✅ | N/A | ✅ | same | Sent via `A2UI-Client-Capabilities` HTTP header |
 | `sendDataModel` sync | ✅ | N/A | ✅ | TBD | Data model echoed in client→server envelope when `sendDataModel: true` |
-| `error` message type | ❌ | ❌ | ❌ | TBD | **Gap** — client→server error reporting |
+| `error` message type | ✅ | N/A | ✅ | TBD | Client→server error reporting via `SendErrorAsync`; `VALIDATION_FAILED` + custom codes |
 | Custom functions | N/A | N/A | N/A | 📋 | v0.10 feature — developer-defined extensions |
 
 **Client-to-server message format** (v0.9 compliant):
@@ -223,8 +223,10 @@ This table tracks which property names we use vs what each spec version expects.
 8. **Extension Specification** (📋 v0.10 feature)
    - Framework for extending the standard catalog
 
-9. **Error Reporting to Server** (❌ v0.9 gap)
-   - Send client-side errors to server via `error` message type
+9. ~~**Error Reporting to Server**~~ ✅ Done
+   - `SendErrorAsync` API on `A2UIStreamClient` sends `{version, error}` envelope
+   - Supports `VALIDATION_FAILED` (with path) and custom error codes
+   - Server-side `HandleErrorAsync` default interface method on `IA2UIAgent`
 
 ---
 

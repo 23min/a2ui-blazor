@@ -100,4 +100,94 @@ public class A2UIClientMessageTests
 
         Assert.Equal(2, doc.RootElement.EnumerateObject().Count());
     }
+
+    [Fact]
+    public void ErrorEnvelope_Serializes_WithVersionAndError()
+    {
+        var error = new A2UIClientError
+        {
+            Code = "VALIDATION_FAILED",
+            SurfaceId = "s1",
+            Message = "Expected string, got number"
+        };
+        var envelope = new A2UIClientMessage { Error = error };
+
+        var json = JsonSerializer.Serialize(envelope);
+        var doc = JsonDocument.Parse(json);
+        var root = doc.RootElement;
+
+        Assert.Equal("v0.9", root.GetProperty("version").GetString());
+        Assert.True(root.TryGetProperty("error", out var errorEl));
+        Assert.Equal("VALIDATION_FAILED", errorEl.GetProperty("code").GetString());
+        Assert.Equal("s1", errorEl.GetProperty("surfaceId").GetString());
+        Assert.Equal("Expected string, got number", errorEl.GetProperty("message").GetString());
+    }
+
+    [Fact]
+    public void ErrorEnvelope_OmitsAction_WhenOnlyErrorSet()
+    {
+        var error = new A2UIClientError { Code = "TEST", SurfaceId = "s1", Message = "test" };
+        var envelope = new A2UIClientMessage { Error = error };
+
+        var json = JsonSerializer.Serialize(envelope);
+        var doc = JsonDocument.Parse(json);
+
+        Assert.False(doc.RootElement.TryGetProperty("action", out _));
+    }
+
+    [Fact]
+    public void ErrorEnvelope_OmitsError_WhenOnlyActionSet()
+    {
+        var action = new A2UIUserAction { Name = "click", SurfaceId = "s1", SourceComponentId = "btn1" };
+        var envelope = new A2UIClientMessage { Action = action };
+
+        var json = JsonSerializer.Serialize(envelope);
+        var doc = JsonDocument.Parse(json);
+
+        Assert.False(doc.RootElement.TryGetProperty("error", out _));
+    }
+
+    [Fact]
+    public void ErrorEnvelope_IncludesPath_WhenProvided()
+    {
+        var error = new A2UIClientError
+        {
+            Code = "VALIDATION_FAILED",
+            SurfaceId = "s1",
+            Message = "bad value",
+            Path = "/components/0/text"
+        };
+        var envelope = new A2UIClientMessage { Error = error };
+
+        var json = JsonSerializer.Serialize(envelope);
+        var doc = JsonDocument.Parse(json);
+        var errorEl = doc.RootElement.GetProperty("error");
+
+        Assert.Equal("/components/0/text", errorEl.GetProperty("path").GetString());
+    }
+
+    [Fact]
+    public void ErrorEnvelope_OmitsPath_WhenNull()
+    {
+        var error = new A2UIClientError { Code = "GENERIC", SurfaceId = "s1", Message = "oops" };
+        var envelope = new A2UIClientMessage { Error = error };
+
+        var json = JsonSerializer.Serialize(envelope);
+        var doc = JsonDocument.Parse(json);
+        var errorEl = doc.RootElement.GetProperty("error");
+
+        Assert.False(errorEl.TryGetProperty("path", out _));
+    }
+
+    [Fact]
+    public void ErrorEnvelope_HasExactlyTwoTopLevelProperties()
+    {
+        var error = new A2UIClientError { Code = "TEST", SurfaceId = "s1", Message = "test" };
+        var envelope = new A2UIClientMessage { Error = error };
+
+        var json = JsonSerializer.Serialize(envelope);
+        var doc = JsonDocument.Parse(json);
+
+        Assert.Equal(2, doc.RootElement.EnumerateObject().Count());
+    }
 }

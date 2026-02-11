@@ -62,22 +62,33 @@ public sealed class A2UIStreamMiddleware
         var envelope = await JsonSerializer.DeserializeAsync<ClientMessageEnvelope>(
             context.Request.Body, s_jsonOptions, context.RequestAborted);
 
-        if (envelope?.Action is null)
+        if (envelope?.Action is not null)
         {
-            context.Response.StatusCode = 400;
+            context.Response.ContentType = "text/event-stream";
+            context.Response.Headers.CacheControl = "no-cache";
+
+            var writer = new A2UIStreamWriter(context.Response.Body, useSse: true);
+            await agent.HandleActionAsync(writer, envelope.Action, context.RequestAborted);
             return;
         }
 
-        context.Response.ContentType = "text/event-stream";
-        context.Response.Headers.CacheControl = "no-cache";
+        if (envelope?.Error is not null)
+        {
+            context.Response.ContentType = "text/event-stream";
+            context.Response.Headers.CacheControl = "no-cache";
 
-        var writer = new A2UIStreamWriter(context.Response.Body, useSse: true);
-        await agent.HandleActionAsync(writer, envelope.Action, context.RequestAborted);
+            var writer = new A2UIStreamWriter(context.Response.Body, useSse: true);
+            await agent.HandleErrorAsync(writer, envelope.Error, context.RequestAborted);
+            return;
+        }
+
+        context.Response.StatusCode = 400;
     }
 
     private sealed class ClientMessageEnvelope
     {
         public string Version { get; set; } = string.Empty;
         public UserActionRequest? Action { get; set; }
+        public ClientErrorRequest? Error { get; set; }
     }
 }

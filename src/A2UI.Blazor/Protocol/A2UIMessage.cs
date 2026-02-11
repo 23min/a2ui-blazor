@@ -84,7 +84,8 @@ public sealed class A2UILocalAction
 
 /// <summary>
 /// v0.9 client-to-server message envelope.
-/// Contains version, action, and optionally the data model (when sendDataModel is true).
+/// Contains version, and either action or error (mutually exclusive).
+/// Optionally includes the data model (when sendDataModel is true and action is present).
 /// </summary>
 public sealed class A2UIClientMessage
 {
@@ -92,11 +93,36 @@ public sealed class A2UIClientMessage
     public string Version { get; set; } = "v0.9";
 
     [JsonPropertyName("action")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public A2UIUserAction? Action { get; set; }
+
+    [JsonPropertyName("error")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public A2UIClientError? Error { get; set; }
 
     [JsonPropertyName("dataModel")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public JsonElement? DataModel { get; set; }
+}
+
+/// <summary>
+/// A client-side error reported to the server via the v0.9 envelope.
+/// Error codes: "VALIDATION_FAILED" (with path) or any custom string.
+/// </summary>
+public sealed class A2UIClientError
+{
+    [JsonPropertyName("code")]
+    public string Code { get; set; } = string.Empty;
+
+    [JsonPropertyName("surfaceId")]
+    public string SurfaceId { get; set; } = string.Empty;
+
+    [JsonPropertyName("message")]
+    public string Message { get; set; } = string.Empty;
+
+    [JsonPropertyName("path")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? Path { get; set; }
 }
 
 /// <summary>

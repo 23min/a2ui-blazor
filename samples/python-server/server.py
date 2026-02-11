@@ -73,6 +73,8 @@ async def restaurant_stream():
 @app.post("/agents/restaurant")
 async def restaurant_action(request: Request):
     body = await request.json()
+    if "error" in body:
+        return StreamingResponse(iter([]), media_type="text/event-stream")
     action = body.get("action", {})
     query = (action.get("context") or {}).get("value", "")
 
@@ -118,6 +120,8 @@ async def contacts_stream():
 @app.post("/agents/contacts")
 async def contacts_action(request: Request):
     body = await request.json()
+    if "error" in body:
+        return StreamingResponse(iter([]), media_type="text/event-stream")
     action = body.get("action", {})
     query = (action.get("context") or {}).get("value", "")
 
