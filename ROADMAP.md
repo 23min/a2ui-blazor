@@ -24,7 +24,7 @@ The core protocol implementation and component catalog.
 
 ## v0.2.0-preview — Production Hardening
 
-**Status: up next**
+**Status: complete**
 
 Make the library reliable enough for real applications.
 
@@ -40,7 +40,7 @@ Make the library reliable enough for real applications.
 
 ## v0.3.0-preview — A2UI v0.9 Spec Compliance
 
-**Status: planned**
+**Status: complete**
 
 Close the gaps between our implementation and the A2UI v0.9 specification. See [SPECIFICATION.md](SPECIFICATION.md) for the full compliance matrix.
 
@@ -58,7 +58,7 @@ Close the gaps between our implementation and the A2UI v0.9 specification. See [
 
 ## v0.4.0-preview — Accessibility & Theming
 
-**Status: planned**
+**Status: up next**
 
 Meet WCAG 2.1 AA and support visual customization.
 
