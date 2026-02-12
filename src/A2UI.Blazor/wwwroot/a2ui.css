@@ -13,6 +13,8 @@
     --a2ui-error: #d32f2f;
     --a2ui-error-bg: #fff5f5;
     --a2ui-warning: #f57c00;
+    --a2ui-focus-ring: 2px solid var(--a2ui-primary);
+    --a2ui-focus-offset: 2px;
 }
 
 /* Surface */
@@ -165,6 +167,10 @@
     margin-bottom: -2px;
     transition: color 0.15s, border-color 0.15s;
 }
+.a2ui-tab-button:focus-visible {
+    outline: var(--a2ui-focus-ring);
+    outline-offset: var(--a2ui-focus-offset);
+}
 .a2ui-tab-button:hover {
     color: var(--a2ui-text);
 }
@@ -189,6 +195,10 @@
     font-family: var(--a2ui-font);
     cursor: pointer;
     transition: background 0.15s, border-color 0.15s;
+}
+.a2ui-button:focus-visible {
+    outline: var(--a2ui-focus-ring);
+    outline-offset: var(--a2ui-focus-offset);
 }
 .a2ui-button:disabled {
     opacity: 0.5;
@@ -238,8 +248,9 @@
     font-family: var(--a2ui-font);
     transition: border-color 0.15s;
 }
-.a2ui-textfield-input:focus {
-    outline: none;
+.a2ui-textfield-input:focus-visible {
+    outline: var(--a2ui-focus-ring);
+    outline-offset: var(--a2ui-focus-offset);
     border-color: var(--a2ui-primary);
 }
 .a2ui-textfield--error .a2ui-textfield-input {
@@ -263,6 +274,10 @@ textarea.a2ui-textfield-input {
     cursor: pointer;
     font-size: 0.95rem;
 }
+.a2ui-checkbox input:focus-visible {
+    outline: var(--a2ui-focus-ring);
+    outline-offset: var(--a2ui-focus-offset);
+}
 
 /* ChoicePicker */
 .a2ui-choicepicker {
@@ -281,6 +296,10 @@ textarea.a2ui-textfield-input {
     font-size: 0.95rem;
     font-family: var(--a2ui-font);
     background: var(--a2ui-bg);
+}
+.a2ui-choicepicker-select:focus-visible {
+    outline: var(--a2ui-focus-ring);
+    outline-offset: var(--a2ui-focus-offset);
 }
 .a2ui-choicepicker--error .a2ui-choicepicker-select {
     border-color: var(--a2ui-error);
@@ -302,6 +321,10 @@ textarea.a2ui-textfield-input {
     border-radius: var(--a2ui-radius);
     font-size: 0.95rem;
     font-family: var(--a2ui-font);
+}
+.a2ui-datetime-input:focus-visible {
+    outline: var(--a2ui-focus-ring);
+    outline-offset: var(--a2ui-focus-offset);
 }
 .a2ui-datetime--error .a2ui-datetime-input {
     border-color: var(--a2ui-error);
@@ -325,6 +348,10 @@ textarea.a2ui-textfield-input {
 .a2ui-slider-input {
     flex: 1;
     accent-color: var(--a2ui-primary);
+}
+.a2ui-slider-input:focus-visible {
+    outline: var(--a2ui-focus-ring);
+    outline-offset: var(--a2ui-focus-offset);
 }
 .a2ui-slider-value {
     font-size: 0.9rem;
