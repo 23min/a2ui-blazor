@@ -1,4 +1,25 @@
-/* A2UI Blazor — Default Stylesheet */
+/* A2UI Blazor — Default Stylesheet
+ *
+ * Theming: Override any --a2ui-* custom property to match your design system.
+ *
+ *   --a2ui-primary          Accent / link color (default: #0078d4)
+ *   --a2ui-primary-hover    Darker accent for hover states
+ *   --a2ui-bg               Component background (cards, inputs)
+ *   --a2ui-bg-surface       Page / surface background
+ *   --a2ui-text             Primary text color
+ *   --a2ui-text-secondary   Captions, placeholders, muted text
+ *   --a2ui-border           Borders and dividers
+ *   --a2ui-radius           Border radius for cards, inputs, buttons
+ *   --a2ui-font             Font stack
+ *   --a2ui-error            Error / invalid color
+ *   --a2ui-error-bg         Error background tint
+ *   --a2ui-warning          Warning color
+ *   --a2ui-focus-ring       Outline style for :focus-visible
+ *   --a2ui-focus-offset     Outline offset for :focus-visible
+ *
+ * Example override in your app CSS:
+ *   :root { --a2ui-primary: #6200ee; --a2ui-radius: 12px; }
+ */
 
 :root {
     --a2ui-primary: #0078d4;
@@ -15,6 +36,50 @@
     --a2ui-warning: #f57c00;
     --a2ui-focus-ring: 2px solid var(--a2ui-primary);
     --a2ui-focus-offset: 2px;
+}
+
+/* Dark mode — automatic via prefers-color-scheme (skipped when user forces light) */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --a2ui-primary: #4ca6e8;
+        --a2ui-primary-hover: #6ab8f0;
+        --a2ui-bg: #1e1e1e;
+        --a2ui-bg-surface: #252525;
+        --a2ui-text: #e0e0e0;
+        --a2ui-text-secondary: #a0a0a0;
+        --a2ui-border: #3a3a3a;
+        --a2ui-error: #ef5350;
+        --a2ui-error-bg: #3d1c1c;
+        --a2ui-warning: #ffb74d;
+    }
+    :root:not([data-theme="light"]) .a2ui-surface-reconnecting {
+        background: rgba(30, 30, 30, 0.85);
+    }
+    :root:not([data-theme="light"]) .a2ui-button-secondary:hover:not(:disabled) {
+        background: rgba(76, 166, 232, 0.12);
+    }
+}
+
+/* Dark mode — manual toggle via data-theme attribute on <html> */
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --a2ui-primary: #4ca6e8;
+    --a2ui-primary-hover: #6ab8f0;
+    --a2ui-bg: #1e1e1e;
+    --a2ui-bg-surface: #252525;
+    --a2ui-text: #e0e0e0;
+    --a2ui-text-secondary: #a0a0a0;
+    --a2ui-border: #3a3a3a;
+    --a2ui-error: #ef5350;
+    --a2ui-error-bg: #3d1c1c;
+    --a2ui-warning: #ffb74d;
+}
+:root[data-theme="dark"] .a2ui-surface-reconnecting {
+    background: rgba(30, 30, 30, 0.85);
+}
+:root[data-theme="dark"] .a2ui-button-secondary:hover:not(:disabled) {
+    background: rgba(76, 166, 232, 0.12);
 }
 
 /* Surface */
@@ -246,6 +311,8 @@
     border-radius: var(--a2ui-radius);
     font-size: 0.95rem;
     font-family: var(--a2ui-font);
+    background: var(--a2ui-bg);
+    color: var(--a2ui-text);
     transition: border-color 0.15s;
 }
 .a2ui-textfield-input:focus-visible {
@@ -296,6 +363,7 @@ textarea.a2ui-textfield-input {
     font-size: 0.95rem;
     font-family: var(--a2ui-font);
     background: var(--a2ui-bg);
+    color: var(--a2ui-text);
 }
 .a2ui-choicepicker-select:focus-visible {
     outline: var(--a2ui-focus-ring);
@@ -321,6 +389,8 @@ textarea.a2ui-textfield-input {
     border-radius: var(--a2ui-radius);
     font-size: 0.95rem;
     font-family: var(--a2ui-font);
+    background: var(--a2ui-bg);
+    color: var(--a2ui-text);
 }
 .a2ui-datetime-input:focus-visible {
     outline: var(--a2ui-focus-ring);
@@ -414,4 +484,17 @@ textarea.a2ui-textfield-input {
     font-family: var(--a2ui-font);
     font-size: 12px;
     fill: var(--a2ui-text);
+}
+
+/* Reduced motion — disable transitions and animations */
+@media (prefers-reduced-motion: reduce) {
+    .a2ui-tab-button,
+    .a2ui-button,
+    .a2ui-textfield-input,
+    .a2ui-sm-node circle {
+        transition: none;
+    }
+    .a2ui-sm-pulse {
+        animation: none;
+    }
 }
