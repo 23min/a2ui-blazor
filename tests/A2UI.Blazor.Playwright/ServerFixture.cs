@@ -5,11 +5,13 @@ namespace A2UI.Blazor.Playwright;
 
 /// <summary>
 /// Assembly-level setup fixture that starts the Python server and Blazor WASM SPA
-/// on dedicated test ports before any Playwright tests run, and shuts them down
-/// gracefully (SIGTERM) after all tests complete.
+/// before any Playwright tests run, and shuts them down gracefully (SIGTERM) after
+/// all tests complete.
 ///
-/// Test ports (15050/15200) are separate from the default dev ports (5050/5200)
-/// so tests never interfere with manually-started servers.
+/// The Python server runs on port 5050 (the default in appsettings.json) because
+/// .NET 10 Blazor WASM does not load environment-specific appsettings files.
+/// The SPA runs on a dedicated test port (15200) to avoid interfering with
+/// manually-started dev servers on 5200.
 /// </summary>
 [SetUpFixture]
 public class ServerFixture
@@ -17,7 +19,7 @@ public class ServerFixture
     private static Process? _pythonServer;
     private static Process? _blazorApp;
 
-    private const int TestPythonPort = 15050;
+    private const int TestPythonPort = 5050;
     private const int TestSpaPort = 15200;
 
     public static string SpaBaseUrl =>
@@ -34,7 +36,9 @@ public class ServerFixture
 
         var repoRoot = FindRepoRoot();
 
-        // Always start our own servers on dedicated test ports
+        // Kill any existing listener on the Python server port so we can bind to it.
+        KillListenerOnPort(TestPythonPort);
+
         _pythonServer = StartProcess(
             "uv", $"run uvicorn server:app --host 0.0.0.0 --port {TestPythonPort}",
             Path.Combine(repoRoot, "samples", "python-server"),
@@ -43,12 +47,7 @@ public class ServerFixture
         _blazorApp = StartProcess(
             "dotnet", $"run --no-launch-profile --urls http://0.0.0.0:{TestSpaPort}",
             Path.Combine(repoRoot, "samples", "blazor-wasm-spa"),
-            environmentVariables: new Dictionary<string, string>
-            {
-                // "Testing" environment makes the WASM app load appsettings.Testing.json,
-                // which points A2UIServerUrl to the test Python server port.
-                ["ASPNETCORE_ENVIRONMENT"] = "Testing"
-            });
+            environmentVariables: null);
 
         // Wait for both servers to be healthy.
         using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(5) };
@@ -87,6 +86,11 @@ public class ServerFixture
 
         var process = Process.Start(psi)
             ?? throw new InvalidOperationException($"Failed to start {fileName} {arguments}");
+
+        // Drain stdout/stderr asynchronously to prevent the child process from
+        // blocking when the OS pipe buffer (4 KB) fills up.
+        process.BeginOutputReadLine();
+        process.BeginErrorReadLine();
 
         return process;
     }
@@ -150,6 +154,32 @@ public class ServerFixture
         finally
         {
             process.Dispose();
+        }
+    }
+
+    /// <summary>
+    /// Kills any process listening on the given port so the fixture can bind to it.
+    /// Uses lsof -sTCP:LISTEN to target only the listener, not client connections.
+    /// </summary>
+    private static void KillListenerOnPort(int port)
+    {
+        try
+        {
+            var psi = new ProcessStartInfo
+            {
+                FileName = "bash",
+                Arguments = $"-c \"lsof -i :{port} -sTCP:LISTEN -t | xargs kill 2>/dev/null\"",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+            };
+            using var process = Process.Start(psi);
+            process?.WaitForExit(5000);
+        }
+        catch
+        {
+            // Best-effort — if it fails, StartProcess will fail with "address in use"
         }
     }
 
