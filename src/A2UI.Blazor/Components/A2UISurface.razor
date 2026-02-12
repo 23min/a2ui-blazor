@@ -4,36 +4,34 @@
 @using Microsoft.Extensions.Logging
 @implements IDisposable
 
-<CascadingValue Value="SurfaceManagerService" IsFixed="true">
-    <div class="a2ui-surface" data-surface-id="@SurfaceId" role="region" aria-label="A2UI Surface">
-        <ErrorBoundary @ref="_surfaceErrorBoundary">
-            <ChildContent>
-                @if (_surface?.GetRoot() is { } root)
-                {
-                    <A2UIComponentRenderer Data="root" Surface="_surface" OnAction="HandleAction" />
-                }
-                else if (_surface is null)
-                {
-                    <div class="a2ui-surface-loading">Connecting...</div>
-                }
-            </ChildContent>
-            <ErrorContent Context="ex">
-                @(LogSurfaceError(ex))
-                <div class="a2ui-surface-error">
-                    <p>Something went wrong.</p>
-                    <button class="a2ui-button a2ui-button-secondary"
-                            @onclick="() => _surfaceErrorBoundary?.Recover()">
-                        Retry
-                    </button>
-                </div>
-            </ErrorContent>
-        </ErrorBoundary>
-        @if (ConnectionState == StreamConnectionState.Reconnecting)
-        {
-            <div class="a2ui-surface-reconnecting" role="status">Reconnecting...</div>
-        }
-    </div>
-</CascadingValue>
+<div class="a2ui-surface" data-surface-id="@SurfaceId" role="region" aria-label="A2UI Surface">
+    <ErrorBoundary @ref="_surfaceErrorBoundary">
+        <ChildContent>
+            @if (_surface?.GetRoot() is { } root)
+            {
+                <A2UIComponentRenderer Data="root" Surface="_surface" OnAction="HandleAction" />
+            }
+            else if (_surface is null)
+            {
+                <div class="a2ui-surface-loading">Connecting...</div>
+            }
+        </ChildContent>
+        <ErrorContent Context="ex">
+            @(LogSurfaceError(ex))
+            <div class="a2ui-surface-error">
+                <p>Something went wrong.</p>
+                <button class="a2ui-button a2ui-button-secondary"
+                        @onclick="() => _surfaceErrorBoundary?.Recover()">
+                    Retry
+                </button>
+            </div>
+        </ErrorContent>
+    </ErrorBoundary>
+    @if (ConnectionState == StreamConnectionState.Reconnecting)
+    {
+        <div class="a2ui-surface-reconnecting" role="status">Reconnecting...</div>
+    }
+</div>
 
 @code {
     [Parameter, EditorRequired]
@@ -44,6 +42,12 @@
 
     [Parameter]
     public StreamConnectionState? ConnectionState { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnSurfaceCreated { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnSurfaceDeleted { get; set; }
 
     [Inject]
     private SurfaceManager SurfaceManagerService { get; set; } = default!;
@@ -58,6 +62,8 @@
     {
         Logger.LogDebug("A2UISurface {SurfaceId} initialized", SurfaceId);
         SurfaceManagerService.OnSurfaceChanged += HandleSurfaceChanged;
+        SurfaceManagerService.OnSurfaceCreated += HandleSurfaceCreated;
+        SurfaceManagerService.OnSurfaceDeleted += HandleSurfaceDeleted;
         _surface = SurfaceManagerService.GetSurface(SurfaceId);
     }
 
@@ -70,6 +76,20 @@
         InvokeAsync(StateHasChanged);
     }
 
+    private void HandleSurfaceCreated(string createdSurfaceId)
+    {
+        if (createdSurfaceId != SurfaceId) return;
+        if (OnSurfaceCreated.HasDelegate)
+            InvokeAsync(() => OnSurfaceCreated.InvokeAsync(createdSurfaceId));
+    }
+
+    private void HandleSurfaceDeleted(string deletedSurfaceId)
+    {
+        if (deletedSurfaceId != SurfaceId) return;
+        if (OnSurfaceDeleted.HasDelegate)
+            InvokeAsync(() => OnSurfaceDeleted.InvokeAsync(deletedSurfaceId));
+    }
+
     private async Task HandleAction(A2UIUserAction action)
     {
         if (OnAction.HasDelegate)
@@ -80,6 +100,8 @@
     {
         Logger.LogDebug("A2UISurface {SurfaceId} disposed", SurfaceId);
         SurfaceManagerService.OnSurfaceChanged -= HandleSurfaceChanged;
+        SurfaceManagerService.OnSurfaceCreated -= HandleSurfaceCreated;
+        SurfaceManagerService.OnSurfaceDeleted -= HandleSurfaceDeleted;
     }
 
     private string? LogSurfaceError(Exception ex)

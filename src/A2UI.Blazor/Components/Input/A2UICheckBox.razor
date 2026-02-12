@@ -5,7 +5,7 @@
     var label = GetString("label") ?? "";
     var isChecked = GetBool("checked");
     var disabled = GetBool("disabled");
-    var error = _interacted ? null : GetString("error");
+    var error = _interacted ? null : (GetString("error") ?? GetValidationError("checked"));
     var helperText = GetString("helperText");
     var describedBy = error is not null ? $"{Data.Id}-error" : helperText is not null ? $"{Data.Id}-helper" : null;
 }
@@ -39,6 +39,7 @@
     private async Task HandleChange(ChangeEventArgs e)
     {
         _interacted = true;
+        ApplyOptimisticUpdate("checked", e.Value);
         var action = GetAction();
         if (action?.Event is not null)
         {
@@ -50,6 +51,10 @@
                 Context = new Dictionary<string, object?> { ["checked"] = e.Value }
             };
             await OnAction.InvokeAsync(userAction);
+        }
+        else if (action?.FunctionCall is not null)
+        {
+            ExecuteLocalAction(action.FunctionCall);
         }
     }
 }

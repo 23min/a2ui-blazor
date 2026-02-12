@@ -36,6 +36,9 @@ public sealed class MessageDispatcher
             case "deleteSurface":
                 HandleDeleteSurface(message);
                 break;
+            case "error":
+                HandleError(message);
+                break;
             default:
                 _logger.LogWarning(LogEvents.UnknownMessageType,
                     "Unknown A2UI message type {MessageType} for surface {SurfaceId}",
@@ -91,5 +94,18 @@ public sealed class MessageDispatcher
             return;
         }
         _surfaceManager.DeleteSurface(message.SurfaceId);
+    }
+
+    private void HandleError(A2UIMessage message)
+    {
+        if (message.SurfaceId is null)
+        {
+            _logger.LogWarning(LogEvents.NullSurfaceId, "error message missing surfaceId");
+            return;
+        }
+        if (message.Path is not null && message.ErrorMessage is not null)
+        {
+            _surfaceManager.SetValidationError(message.SurfaceId, message.Path, message.ErrorMessage);
+        }
     }
 }

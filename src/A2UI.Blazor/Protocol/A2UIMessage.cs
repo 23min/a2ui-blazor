@@ -32,6 +32,12 @@ public sealed class A2UIMessage
 
     [JsonPropertyName("value")]
     public JsonElement? Value { get; set; }
+
+    [JsonPropertyName("message")]
+    public string? ErrorMessage { get; set; }
+
+    [JsonPropertyName("code")]
+    public string? ErrorCode { get; set; }
 }
 
 /// <summary>

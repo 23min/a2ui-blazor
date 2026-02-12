@@ -71,14 +71,15 @@ Meet WCAG 2.1 AA and support visual customization.
 
 ## v0.5.0-preview — Advanced Protocol Features
 
-**Status: planned**
+**Status: complete**
 
 Fill in the remaining A2UI protocol capabilities.
 
-- [ ] **Local actions** (`functionCall`) — client-side execution without server round-trip, with a pluggable function registry
-- [ ] **Optimistic updates** — update local data model immediately on user action, reconcile when server responds
-- [ ] **Surface lifecycle events** — expose `OnSurfaceCreated`, `OnSurfaceDeleted` callbacks for application integration
-- [ ] **Validation error rendering** — display inline validation from server `error` messages
+- [x] **Surface lifecycle events** — `OnSurfaceCreated` / `OnSurfaceDeleted` events on `SurfaceManager`, with `EventCallback` parameters on `A2UISurface`
+- [x] **Local actions** (`functionCall`) — `LocalActionRegistry` service for client-side execution without server round-trip; pluggable via `AddA2UIBlazor(configureLocalActions: ...)`
+- [x] **Optimistic updates** — input components update the local data model immediately on user interaction, before the server responds; server reconciles on next `updateDataModel`
+- [x] **Validation error rendering** — server `error` messages stored per data-model path; input components render inline validation with component-error-takes-precedence semantics
+- [x] **NuGet package icon** — 128×128 PNG icon included in the `.nupkg`
 
 ## v1.0.0 — Stable Release
 

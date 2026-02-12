@@ -36,6 +36,11 @@ public sealed class A2UISurfaceState
     /// </summary>
     public bool IsReady { get; set; }
 
+    /// <summary>
+    /// Server-sent validation errors keyed by data model path.
+    /// </summary>
+    public Dictionary<string, string> ValidationErrors { get; } = new();
+
     public A2UISurfaceState(string surfaceId)
     {
         SurfaceId = surfaceId;
