@@ -5,22 +5,40 @@
     var label = GetString("label") ?? "";
     var isChecked = GetBool("checked");
     var disabled = GetBool("disabled");
+    var error = _interacted ? null : GetString("error");
+    var helperText = GetString("helperText");
+    var describedBy = error is not null ? $"{Data.Id}-error" : helperText is not null ? $"{Data.Id}-helper" : null;
 }
 
-<label class="a2ui-checkbox">
-    <input type="checkbox"
-           checked="@isChecked"
-           disabled="@disabled"
-           @onchange="HandleChange" />
-    <span class="a2ui-checkbox-label">@label</span>
-</label>
+<div class="a2ui-checkbox-wrapper @(error is not null ? "a2ui-checkbox--error" : "")">
+    <label class="a2ui-checkbox">
+        <input type="checkbox"
+               checked="@isChecked"
+               disabled="@disabled"
+               aria-describedby="@describedBy"
+               aria-invalid="@(error is not null ? "true" : null)"
+               @onchange="HandleChange" />
+        <span class="a2ui-checkbox-label">@label</span>
+    </label>
+    @if (error is not null)
+    {
+        <span id="@($"{Data.Id}-error")" class="a2ui-input-error">@error</span>
+    }
+    else if (helperText is not null)
+    {
+        <span id="@($"{Data.Id}-helper")" class="a2ui-input-helper">@helperText</span>
+    }
+</div>
 
 @code {
     [Parameter]
     public EventCallback<A2UIUserAction> OnAction { get; set; }
 
+    private bool _interacted;
+
     private async Task HandleChange(ChangeEventArgs e)
     {
+        _interacted = true;
         var action = GetAction();
         if (action?.Event is not null)
         {

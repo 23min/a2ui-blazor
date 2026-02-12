@@ -34,7 +34,7 @@ public sealed class ComponentGalleryAgent : IA2UIAgent
 
         // Input section
         components.Add(new ComponentBuilder("input-section", "Card").Title("Input Components").Children("input-col").Build());
-        components.Add(new ComponentBuilder("input-col", "Column").Children("btn-row", "textfield1", "checkbox1", "choice1", "datetime1", "slider1").Gap("12").Build());
+        components.Add(new ComponentBuilder("input-col", "Column").Children("btn-row", "textfield1", "checkbox1", "choice1", "datetime1", "slider1", "validation-divider", "validation-label", "tf-error", "tf-helper", "cb-error", "cp-error").Gap("12").Build());
         components.Add(new ComponentBuilder("btn-row", "Row").Children("btn-primary", "btn-secondary", "btn-disabled").Gap("8").Build());
         components.Add(new ComponentBuilder("btn-primary", "Button").Label("Primary").Variant("primary").Action("click").Build());
         components.Add(new ComponentBuilder("btn-secondary", "Button").Label("Secondary").Variant("secondary").Action("click").Build());
@@ -44,6 +44,14 @@ public sealed class ComponentGalleryAgent : IA2UIAgent
         components.Add(new ComponentBuilder("choice1", "ChoicePicker").Label("Pick a fruit").Options("Apple", "Banana", "Cherry", "Date").Action("select").Build());
         components.Add(new ComponentBuilder("datetime1", "DateTimeInput").Label("Select a date").Set("inputType", "date").Action("dateChange").Build());
         components.Add(new ComponentBuilder("slider1", "Slider").Label("Volume").Min(0).Max(100).Step(1).Value(50).Action("slide").Build());
+
+        // Validation examples
+        components.Add(new ComponentBuilder("validation-divider", "Divider").Build());
+        components.Add(new ComponentBuilder("validation-label", "Text").Text("Validation & Helper Text").Variant("h3").Build());
+        components.Add(new ComponentBuilder("tf-error", "TextField").Label("Email").Placeholder("you@example.com").Set("error", "Please enter a valid email address").Build());
+        components.Add(new ComponentBuilder("tf-helper", "TextField").Label("Username").Placeholder("Choose a username").Set("helperText", "Must be 3-20 characters, letters and numbers only").Build());
+        components.Add(new ComponentBuilder("cb-error", "CheckBox").Label("I accept the terms").Set("error", "You must accept the terms to continue").Build());
+        components.Add(new ComponentBuilder("cp-error", "ChoicePicker").Label("Country").Options("USA", "Canada", "UK", "Germany").Set("error", "Please select your country").Build());
 
         // Layout section
         components.Add(new ComponentBuilder("layout-section", "Card").Title("Layout Components").Children("layout-col").Build());

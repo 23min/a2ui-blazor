@@ -106,5 +106,116 @@ public class TextFieldTests : IDisposable
         Assert.True(cut.Find("input").HasAttribute("disabled"));
     }
 
+    [Fact]
+    public void TextField_LabelLinkedToInput_ViaForId()
+    {
+        var surface = _ctx.SetupSurface("s", [
+            SurfaceTestContext.MakeComponent("email", "TextField", new()
+            {
+                ["label"] = "Email"
+            })
+        ]);
+
+        var cut = _ctx.Render<A2UITextField>(p => p
+            .Add(c => c.Data, surface.Components["email"])
+            .Add(c => c.Surface, surface));
+
+        var label = cut.Find("label");
+        var input = cut.Find("input");
+        Assert.Equal("email", label.GetAttribute("for"));
+        Assert.Equal("email", input.GetAttribute("id"));
+    }
+
+    [Fact]
+    public void TextField_Error_SetsAriaInvalid()
+    {
+        var surface = _ctx.SetupSurface("s", [
+            SurfaceTestContext.MakeComponent("tf", "TextField", new()
+            {
+                ["label"] = "Name",
+                ["error"] = "Required field"
+            })
+        ]);
+
+        var cut = _ctx.Render<A2UITextField>(p => p
+            .Add(c => c.Data, surface.Components["tf"])
+            .Add(c => c.Surface, surface));
+
+        var input = cut.Find("input");
+        Assert.Equal("true", input.GetAttribute("aria-invalid"));
+    }
+
+    [Fact]
+    public void TextField_Error_RendersErrorText()
+    {
+        var surface = _ctx.SetupSurface("s", [
+            SurfaceTestContext.MakeComponent("tf", "TextField", new()
+            {
+                ["label"] = "Name",
+                ["error"] = "Required field"
+            })
+        ]);
+
+        var cut = _ctx.Render<A2UITextField>(p => p
+            .Add(c => c.Data, surface.Components["tf"])
+            .Add(c => c.Surface, surface));
+
+        var errorSpan = cut.Find(".a2ui-input-error");
+        Assert.Equal("Required field", errorSpan.TextContent.Trim());
+        Assert.Equal("tf-error", errorSpan.GetAttribute("id"));
+
+        var input = cut.Find("input");
+        Assert.Equal("tf-error", input.GetAttribute("aria-describedby"));
+    }
+
+    [Fact]
+    public void TextField_HelperText_LinkedViaAriaDescribedby()
+    {
+        var surface = _ctx.SetupSurface("s", [
+            SurfaceTestContext.MakeComponent("tf", "TextField", new()
+            {
+                ["label"] = "Email",
+                ["helperText"] = "We won't share your email"
+            })
+        ]);
+
+        var cut = _ctx.Render<A2UITextField>(p => p
+            .Add(c => c.Data, surface.Components["tf"])
+            .Add(c => c.Surface, surface));
+
+        var helperSpan = cut.Find(".a2ui-input-helper");
+        Assert.Equal("We won't share your email", helperSpan.TextContent.Trim());
+        Assert.Equal("tf-helper", helperSpan.GetAttribute("id"));
+
+        var input = cut.Find("input");
+        Assert.Equal("tf-helper", input.GetAttribute("aria-describedby"));
+    }
+
+    [Fact]
+    public void TextField_Error_ClearsOnUserInput()
+    {
+        var surface = _ctx.SetupSurface("s", [
+            SurfaceTestContext.MakeComponent("tf", "TextField", new()
+            {
+                ["label"] = "Email",
+                ["error"] = "Required"
+            })
+        ]);
+
+        var cut = _ctx.Render<A2UITextField>(p => p
+            .Add(c => c.Data, surface.Components["tf"])
+            .Add(c => c.Surface, surface));
+
+        // Error visible initially
+        Assert.NotNull(cut.Find(".a2ui-input-error"));
+
+        // Type in the input
+        cut.Find("input").Input("hello");
+
+        // Error should be gone
+        Assert.Throws<Bunit.ElementNotFoundException>(() => cut.Find(".a2ui-input-error"));
+        Assert.Null(cut.Find("input").GetAttribute("aria-invalid"));
+    }
+
     public void Dispose() => _ctx.Dispose();
 }

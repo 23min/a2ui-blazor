@@ -6,16 +6,22 @@
     var options = GetStringList("options");
     var selected = GetString("selected") ?? "";
     var disabled = GetBool("disabled");
+    var error = _interacted ? null : GetString("error");
+    var helperText = GetString("helperText");
+    var describedBy = error is not null ? $"{Data.Id}-error" : helperText is not null ? $"{Data.Id}-helper" : null;
 }
 
-<div class="a2ui-choicepicker">
+<div class="a2ui-choicepicker @(error is not null ? "a2ui-choicepicker--error" : "")">
     @if (label is not null)
     {
-        <label class="a2ui-choicepicker-label">@label</label>
+        <label class="a2ui-choicepicker-label" for="@Data.Id">@label</label>
     }
     <select class="a2ui-choicepicker-select"
+            id="@Data.Id"
             disabled="@disabled"
             value="@selected"
+            aria-describedby="@describedBy"
+            aria-invalid="@(error is not null ? "true" : null)"
             @onchange="HandleChange">
         <option value="">-- Select --</option>
         @foreach (var option in options)
@@ -23,14 +29,25 @@
             <option value="@option" selected="@(option == selected)">@option</option>
         }
     </select>
+    @if (error is not null)
+    {
+        <span id="@($"{Data.Id}-error")" class="a2ui-input-error">@error</span>
+    }
+    else if (helperText is not null)
+    {
+        <span id="@($"{Data.Id}-helper")" class="a2ui-input-helper">@helperText</span>
+    }
 </div>
 
 @code {
     [Parameter]
     public EventCallback<A2UIUserAction> OnAction { get; set; }
 
+    private bool _interacted;
+
     private async Task HandleChange(ChangeEventArgs e)
     {
+        _interacted = true;
         var action = GetAction();
         if (action?.Event is not null)
         {

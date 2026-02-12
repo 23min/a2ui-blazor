@@ -181,6 +181,8 @@ async def gallery_stream():
             {"id": "input-col", "component": "Column", "children": [
                 "btn-primary", "textfield1", "checkbox1", "slider1",
                 "choicepicker1", "dateinput1",
+                "validation-divider", "validation-label",
+                "tf-error", "tf-helper", "cb-error", "cp-error",
             ], "gap": "12"},
             {"id": "btn-primary", "component": "Button", "label": "Click Me", "variant": "primary"},
             {"id": "textfield1", "component": "TextField", "label": "Text Field", "placeholder": "Type here..."},
@@ -188,6 +190,14 @@ async def gallery_stream():
             {"id": "slider1", "component": "Slider", "label": "Volume", "min": 0, "max": 100, "step": 1, "value": 50},
             {"id": "choicepicker1", "component": "ChoicePicker", "label": "Favorite color", "options": ["Red", "Green", "Blue", "Yellow"]},
             {"id": "dateinput1", "component": "DateTimeInput", "label": "Pick a date", "inputType": "date"},
+
+            # Validation examples
+            {"id": "validation-divider", "component": "Divider"},
+            {"id": "validation-label", "component": "Text", "text": "Validation & Helper Text", "variant": "h3"},
+            {"id": "tf-error", "component": "TextField", "label": "Email", "placeholder": "you@example.com", "error": "Please enter a valid email address"},
+            {"id": "tf-helper", "component": "TextField", "label": "Username", "placeholder": "Choose a username", "helperText": "Must be 3-20 characters, letters and numbers only"},
+            {"id": "cb-error", "component": "CheckBox", "label": "I accept the terms", "error": "You must accept the terms to continue"},
+            {"id": "cp-error", "component": "ChoicePicker", "label": "Country", "options": ["USA", "Canada", "UK", "Germany"], "error": "Please select your country"},
             {"id": "divider3", "component": "Divider"},
 
             # ── Media Components ────────────────────────────────────────
