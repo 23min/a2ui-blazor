@@ -84,7 +84,7 @@ public class GalleryPageTests : PageTest
         await Expect(Page.Locator("input[placeholder='Type here...']")).ToBeVisibleAsync();
 
         // CheckBox
-        await Expect(Page.Locator("input[type='checkbox']")).ToBeVisibleAsync();
+        await Expect(Page.GetByLabel("Check me")).ToBeVisibleAsync();
 
         // Slider
         var slider = Page.Locator("input[type='range']");
@@ -92,7 +92,7 @@ public class GalleryPageTests : PageTest
         Assert.That(await slider.InputValueAsync(), Is.EqualTo("50"));
 
         // ChoicePicker
-        var select = Page.Locator(".a2ui-choicepicker-select");
+        var select = Page.Locator("select#choicepicker1");
         await Expect(select).ToBeVisibleAsync();
         await Expect(Page.Locator("text=Favorite color")).ToBeVisibleAsync();
 

@@ -143,7 +143,8 @@ public abstract class A2UIComponentBase : ComponentBase
     protected JsonElement? GetElement(string propertyName)
     {
         if (Data.Properties is null) return null;
-        return Data.Properties.GetValueOrDefault(propertyName);
+        if (!Data.Properties.TryGetValue(propertyName, out var element)) return null;
+        return element;
     }
 
     /// <summary>

@@ -62,7 +62,7 @@ Close the gaps between our implementation and the A2UI v0.9 specification. See [
 
 Meet WCAG 2.1 AA and support visual customization.
 
-- [ ] **Accessible forms** — proper `<label>` / `for` associations, `aria-describedby`, `aria-invalid`
+- [x] **Accessible forms** — proper `<label>` / `for` associations, `aria-describedby`, `aria-invalid`, `helperText` and `error` properties on all input components
 - [ ] **Keyboard navigation** — visible `:focus-visible` rings on all interactive components
 - [x] **Semantic HTML** — `<ul>` / `<li>` in List, `<article>` for Card, landmark roles (`role="region"` on Surface, `role="status"`/`role="alert"` on error states)
 - [ ] **Dark mode** — `prefers-color-scheme` media query with automatic light/dark switching
