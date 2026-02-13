@@ -114,6 +114,37 @@ public class MessageDispatcherTests
     }
 
     [Fact]
+    public void Dispatch_Error_SetsValidationError()
+    {
+        _dispatcher.Dispatch(new A2UIMessage { Type = "createSurface", SurfaceId = "s1" });
+        _dispatcher.Dispatch(new A2UIMessage
+        {
+            Type = "updateComponents",
+            SurfaceId = "s1",
+            Components = [new() { Id = "root", Component = "Column" }]
+        });
+
+        _dispatcher.Dispatch(new A2UIMessage
+        {
+            Type = "error",
+            SurfaceId = "s1",
+            Path = "/email",
+            ErrorMessage = "Invalid email address"
+        });
+
+        var surface = _manager.GetSurface("s1");
+        Assert.Equal("Invalid email address", surface!.ValidationErrors["/email"]);
+    }
+
+    [Fact]
+    public void Dispatch_Error_NullSurfaceId_DoesNotThrow()
+    {
+        var ex = Record.Exception(() =>
+            _dispatcher.Dispatch(new A2UIMessage { Type = "error", SurfaceId = null, ErrorMessage = "fail" }));
+        Assert.Null(ex);
+    }
+
+    [Fact]
     public void Dispatch_FullSequence_CreatesRenderableSurface()
     {
         // Simulate the exact message sequence the Python server sends

@@ -82,10 +82,10 @@ The Blazor WASM SPA (`samples/blazor-wasm-spa`) and Blazor Server App (`samples/
 
 ### Killing Ports
 
-When asked to kill ports or fix "address already in use" errors, use `lsof -i :<port> -t | xargs kill` to find and kill the process in one command. Sample app ports: dotnet-server=5050, blazor-server-app=5100, blazor-wasm-spa=5200.
+When asked to kill ports or fix "address already in use" errors, use `lsof` with `-sTCP:LISTEN` to target only the **listening** process (not client connections, which may include the remote session). Sample app ports: dotnet-server=5050, blazor-server-app=5100, blazor-wasm-spa=5200.
 
 ```bash
-lsof -i :5050 -t | xargs kill   # kill whatever is on port 5050
+lsof -i :5050 -sTCP:LISTEN -t | xargs kill   # kill only the listener on port 5050
 ```
 
 ### Documentation

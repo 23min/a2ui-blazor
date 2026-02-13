@@ -25,6 +25,16 @@ public sealed class SurfaceManager
     /// </summary>
     public event Action<string>? OnSurfaceChanged;
 
+    /// <summary>
+    /// Fired when a new surface is created.
+    /// </summary>
+    public event Action<string>? OnSurfaceCreated;
+
+    /// <summary>
+    /// Fired when a surface is deleted.
+    /// </summary>
+    public event Action<string>? OnSurfaceDeleted;
+
     public A2UISurfaceState? GetSurface(string surfaceId) =>
         _surfaces.GetValueOrDefault(surfaceId);
 
@@ -40,6 +50,7 @@ public sealed class SurfaceManager
             Theme = theme
         };
         _surfaces[surfaceId] = surface;
+        NotifySurfaceCreated(surfaceId);
     }
 
     public void UpdateComponents(string surfaceId, List<A2UIComponentData> components)
@@ -115,11 +126,38 @@ public sealed class SurfaceManager
         {
             _logger.LogInformation(LogEvents.SurfaceDeleted, "Deleting surface {SurfaceId}", surfaceId);
             surface.DataModel?.Dispose();
+            NotifySurfaceDeleted(surfaceId);
             NotifySurfaceChanged(surfaceId);
         }
         else
         {
             _logger.LogWarning(LogEvents.UnknownSurface, "Cannot delete unknown surface {SurfaceId}", surfaceId);
+        }
+    }
+
+    public void SetValidationError(string surfaceId, string path, string message)
+    {
+        if (!_surfaces.TryGetValue(surfaceId, out var surface))
+        {
+            _logger.LogWarning(LogEvents.UnknownSurface, "Cannot set validation error for unknown surface {SurfaceId}", surfaceId);
+            return;
+        }
+
+        surface.ValidationErrors[path] = message;
+        if (surface.IsReady)
+        {
+            NotifySurfaceChanged(surfaceId);
+        }
+    }
+
+    public void ClearValidationError(string surfaceId, string path)
+    {
+        if (!_surfaces.TryGetValue(surfaceId, out var surface))
+            return;
+
+        if (surface.ValidationErrors.Remove(path) && surface.IsReady)
+        {
+            NotifySurfaceChanged(surfaceId);
         }
     }
 
@@ -142,6 +180,30 @@ public sealed class SurfaceManager
         catch (Exception ex)
         {
             _logger.LogError(ex, "Subscriber error in OnSurfaceChanged for surface {SurfaceId}", surfaceId);
+        }
+    }
+
+    private void NotifySurfaceCreated(string surfaceId)
+    {
+        try
+        {
+            OnSurfaceCreated?.Invoke(surfaceId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Subscriber error in OnSurfaceCreated for surface {SurfaceId}", surfaceId);
+        }
+    }
+
+    private void NotifySurfaceDeleted(string surfaceId)
+    {
+        try
+        {
+            OnSurfaceDeleted?.Invoke(surfaceId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Subscriber error in OnSurfaceDeleted for surface {SurfaceId}", surfaceId);
         }
     }
 }

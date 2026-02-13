@@ -15,6 +15,7 @@ public class SurfaceTestContext : BunitContext
     public SurfaceManager SurfaceManager { get; }
     public MessageDispatcher Dispatcher { get; }
     public ComponentRegistry Registry { get; }
+    public LocalActionRegistry LocalActionRegistry { get; }
 
     public SurfaceTestContext()
     {
@@ -23,10 +24,12 @@ public class SurfaceTestContext : BunitContext
 
         SurfaceManager = new SurfaceManager(NullLogger<SurfaceManager>.Instance);
         Dispatcher = new MessageDispatcher(SurfaceManager, NullLogger<MessageDispatcher>.Instance);
+        LocalActionRegistry = new LocalActionRegistry();
 
         Services.AddSingleton(Registry);
         Services.AddSingleton(SurfaceManager);
         Services.AddSingleton(Dispatcher);
+        Services.AddSingleton(LocalActionRegistry);
         Services.AddTransient<JsonlStreamReader>();
     }
 

@@ -5,12 +5,14 @@
     <Description>A2UI protocol renderer for Blazor WebAssembly</Description>
     <Authors>A2UI Blazor Contributors</Authors>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <SupportedPlatform Include="browser" />
     <InternalsVisibleTo Include="A2UI.Blazor.Tests" />
     <None Include="../../README.md" Pack="true" PackagePath="\" />
+    <None Include="../../assets/v6b-charcoal-green-128.png" Pack="true" PackagePath="icon.png" />
   </ItemGroup>
 
   <ItemGroup>

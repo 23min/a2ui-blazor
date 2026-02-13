@@ -8,7 +8,7 @@
     var step = GetNumber("step") ?? 1;
     var value = GetNumber("value") ?? 50;
     var disabled = GetBool("disabled");
-    var error = _interacted ? null : GetString("error");
+    var error = _interacted ? null : (GetString("error") ?? GetValidationError("value"));
     var helperText = GetString("helperText");
     var describedBy = error is not null ? $"{Data.Id}-error" : helperText is not null ? $"{Data.Id}-helper" : null;
 }
@@ -51,6 +51,7 @@
     private async Task HandleInput(ChangeEventArgs e)
     {
         _interacted = true;
+        ApplyOptimisticUpdate("value", e.Value?.ToString());
         var action = GetAction();
         if (action?.Event is not null)
         {
@@ -62,6 +63,10 @@
                 Context = new Dictionary<string, object?> { ["value"] = e.Value?.ToString() }
             };
             await OnAction.InvokeAsync(userAction);
+        }
+        else if (action?.FunctionCall is not null)
+        {
+            ExecuteLocalAction(action.FunctionCall);
         }
     }
 }

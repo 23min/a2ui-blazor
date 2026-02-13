@@ -54,7 +54,7 @@ builder.Services.AddA2UIBlazor(registry =>
 
 ### Prerequisites
 
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 - [uv](https://docs.astral.sh/uv/) + Python 3.10+ (only for the Python server sample)
 
 ### Build
@@ -231,7 +231,7 @@ Targets [A2UI specification v0.9](https://github.com/google/A2UI/blob/main/speci
 
 ## Technology Stack
 
-- **.NET 8** (LTS)
+- **.NET 10** (current LTS)
 - **Blazor** (WebAssembly and Server)
 - **System.Text.Json** (zero third-party dependencies in the core library)
 - **ASP.NET Core** (server library only)
@@ -250,13 +250,19 @@ samples/
   blazor-server-app/             # Blazor Server app (enterprise SSR)
 
 tests/
-  A2UI.Blazor.Tests/             # bUnit component tests (115 tests)
-  A2UI.Blazor.Playwright/        # Playwright E2E browser tests (19 tests)
+  A2UI.Blazor.Tests/             # bUnit component tests (273 tests)
+  A2UI.Blazor.Playwright/        # Playwright E2E browser tests (46 tests)
 ```
 
 ## Project Status
 
-Under active development. Core renderer and server libraries are functional with all 17 standard components implemented. Four samples demonstrate the full matrix of server (Python, .NET) and client (WASM, Server) combinations. See the [Roadmap](ROADMAP.md) for what's next.
+Under active development. Core renderer and server libraries are functional with all 17 standard components, accessibility (WCAG 2.1 AA), dark mode, local actions, optimistic updates, and validation error rendering. Four samples demonstrate the full matrix of server (Python, .NET) and client (WASM, Server) combinations. See the [Roadmap](ROADMAP.md) and [Changelog](CHANGELOG.md) for details.
+
+## Documentation
+
+- [Changelog](CHANGELOG.md) — release notes for every version
+- [Roadmap](ROADMAP.md) — planned milestones and progress
+- [Specification Compliance](SPECIFICATION.md) — A2UI v0.9 protocol coverage
 
 ## References
 

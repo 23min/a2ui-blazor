@@ -12,7 +12,8 @@ public static class A2UIBlazorServiceExtensions
     /// </summary>
     public static IServiceCollection AddA2UIBlazor(
         this IServiceCollection services,
-        Action<ComponentRegistry>? configureComponents = null)
+        Action<ComponentRegistry>? configureComponents = null,
+        Action<LocalActionRegistry>? configureLocalActions = null)
     {
         services.AddSingleton<SurfaceManager>();
         services.AddSingleton<MessageDispatcher>();
@@ -25,6 +26,13 @@ public static class A2UIBlazorServiceExtensions
             var registry = new ComponentRegistry(logger);
             registry.RegisterStandardComponents();
             configureComponents?.Invoke(registry);
+            return registry;
+        });
+
+        services.AddSingleton(sp =>
+        {
+            var registry = new LocalActionRegistry();
+            configureLocalActions?.Invoke(registry);
             return registry;
         });
 

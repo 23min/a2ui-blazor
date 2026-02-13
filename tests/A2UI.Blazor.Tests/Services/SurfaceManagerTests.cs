@@ -308,4 +308,120 @@ public class SurfaceManagerTests
 
         Assert.Null(surface!.Theme);
     }
+
+    // ── OnSurfaceCreated ───────────────────────────────────────────
+
+    [Fact]
+    public void CreateSurface_FiresOnSurfaceCreated()
+    {
+        string? createdId = null;
+        _manager.OnSurfaceCreated += id => createdId = id;
+
+        _manager.CreateSurface("s1", null, false);
+
+        Assert.Equal("s1", createdId);
+    }
+
+    [Fact]
+    public void CreateSurface_FiresOnSurfaceCreated_BeforeOnSurfaceChanged()
+    {
+        var events = new List<string>();
+        _manager.OnSurfaceCreated += _ => events.Add("created");
+        _manager.OnSurfaceChanged += _ => events.Add("changed");
+
+        _manager.CreateSurface("s1", null, false);
+        // OnSurfaceCreated fires, but OnSurfaceChanged does not fire on create
+        Assert.Equal(["created"], events);
+    }
+
+    // ── OnSurfaceDeleted ───────────────────────────────────────────
+
+    [Fact]
+    public void DeleteSurface_FiresOnSurfaceDeleted()
+    {
+        _manager.CreateSurface("s1", null, false);
+
+        string? deletedId = null;
+        _manager.OnSurfaceDeleted += id => deletedId = id;
+
+        _manager.DeleteSurface("s1");
+
+        Assert.Equal("s1", deletedId);
+    }
+
+    [Fact]
+    public void DeleteSurface_UnknownSurface_DoesNotFireOnSurfaceDeleted()
+    {
+        int fireCount = 0;
+        _manager.OnSurfaceDeleted += _ => fireCount++;
+
+        _manager.DeleteSurface("nonexistent");
+
+        Assert.Equal(0, fireCount);
+    }
+
+    [Fact]
+    public void DeleteSurface_FiresOnSurfaceDeleted_BeforeOnSurfaceChanged()
+    {
+        _manager.CreateSurface("s1", null, false);
+
+        var events = new List<string>();
+        _manager.OnSurfaceDeleted += _ => events.Add("deleted");
+        _manager.OnSurfaceChanged += _ => events.Add("changed");
+
+        _manager.DeleteSurface("s1");
+
+        Assert.Equal(["deleted", "changed"], events);
+    }
+
+    // ── Validation Errors ──────────────────────────────────────────
+
+    [Fact]
+    public void SetValidationError_StoresError()
+    {
+        _manager.CreateSurface("s1", null, false);
+        _manager.UpdateComponents("s1", [new() { Id = "root", Component = "Column" }]);
+
+        _manager.SetValidationError("s1", "/email", "Invalid email");
+
+        var surface = _manager.GetSurface("s1");
+        Assert.Equal("Invalid email", surface!.ValidationErrors["/email"]);
+    }
+
+    [Fact]
+    public void SetValidationError_FiresSurfaceChanged()
+    {
+        _manager.CreateSurface("s1", null, false);
+        _manager.UpdateComponents("s1", [new() { Id = "root", Component = "Column" }]);
+
+        int fireCount = 0;
+        _manager.OnSurfaceChanged += _ => fireCount++;
+
+        _manager.SetValidationError("s1", "/email", "Invalid");
+
+        Assert.Equal(1, fireCount);
+    }
+
+    [Fact]
+    public void ClearValidationError_RemovesSpecificError()
+    {
+        _manager.CreateSurface("s1", null, false);
+        _manager.UpdateComponents("s1", [new() { Id = "root", Component = "Column" }]);
+
+        _manager.SetValidationError("s1", "/email", "Invalid");
+        _manager.SetValidationError("s1", "/name", "Required");
+
+        _manager.ClearValidationError("s1", "/email");
+
+        var surface = _manager.GetSurface("s1");
+        Assert.False(surface!.ValidationErrors.ContainsKey("/email"));
+        Assert.Equal("Required", surface.ValidationErrors["/name"]);
+    }
+
+    [Fact]
+    public void SetValidationError_UnknownSurface_DoesNotThrow()
+    {
+        var ex = Record.Exception(() => _manager.SetValidationError("missing", "/x", "err"));
+        Assert.Null(ex);
+    }
 }

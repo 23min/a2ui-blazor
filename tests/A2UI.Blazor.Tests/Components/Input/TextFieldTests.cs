@@ -1,3 +1,4 @@
+using System.Text.Json;
 using A2UI.Blazor.Components.Input;
 using A2UI.Blazor.Protocol;
 using A2UI.Blazor.Tests.Helpers;
@@ -215,6 +216,95 @@ public class TextFieldTests : IDisposable
         // Error should be gone
         Assert.Throws<Bunit.ElementNotFoundException>(() => cut.Find(".a2ui-input-error"));
         Assert.Null(cut.Find("input").GetAttribute("aria-invalid"));
+    }
+
+    [Fact]
+    public void Input_OptimisticallyUpdatesDataModel_WhenValueIsBound()
+    {
+        var surface = _ctx.SetupSurface("s", [
+            SurfaceTestContext.MakeComponent("tf", "TextField", new()
+            {
+                ["value"] = "/name",
+                ["action"] = new { @event = new { name = "update" } }
+            })
+        ], new { name = "Alice" });
+
+        var cut = _ctx.Render<A2UITextField>(p => p
+            .Add(c => c.Data, surface.Components["tf"])
+            .Add(c => c.Surface, surface)
+            .Add(c => c.OnAction, (A2UIUserAction _) => { }));
+
+        cut.Find("input").Input("Bob");
+
+        // Data model should be updated optimistically
+        var resolved = _ctx.SurfaceManager.ResolveBinding("s", "/name");
+        Assert.Equal("Bob", resolved?.GetString());
+    }
+
+    [Fact]
+    public void Input_DoesNotOptimisticallyUpdate_WhenValueIsLiteral()
+    {
+        var surface = _ctx.SetupSurface("s", [
+            SurfaceTestContext.MakeComponent("tf", "TextField", new()
+            {
+                ["value"] = "static text",
+                ["action"] = new { @event = new { name = "update" } }
+            })
+        ], new { name = "Alice" });
+
+        var cut = _ctx.Render<A2UITextField>(p => p
+            .Add(c => c.Data, surface.Components["tf"])
+            .Add(c => c.Surface, surface)
+            .Add(c => c.OnAction, (A2UIUserAction _) => { }));
+
+        cut.Find("input").Input("changed");
+
+        // Data model should NOT be changed
+        var resolved = _ctx.SurfaceManager.ResolveBinding("s", "/name");
+        Assert.Equal("Alice", resolved?.GetString());
+    }
+
+    [Fact]
+    public void TextField_ShowsValidationError_WhenBoundPathHasError()
+    {
+        var surface = _ctx.SetupSurface("s", [
+            SurfaceTestContext.MakeComponent("tf", "TextField", new()
+            {
+                ["label"] = "Email",
+                ["value"] = "/email"
+            })
+        ], new { email = "bad" });
+
+        _ctx.SurfaceManager.SetValidationError("s", "/email", "Invalid email format");
+
+        var cut = _ctx.Render<A2UITextField>(p => p
+            .Add(c => c.Data, surface.Components["tf"])
+            .Add(c => c.Surface, surface));
+
+        var errorSpan = cut.Find(".a2ui-input-error");
+        Assert.Equal("Invalid email format", errorSpan.TextContent.Trim());
+    }
+
+    [Fact]
+    public void TextField_ComponentError_TakesPrecedenceOverValidationError()
+    {
+        var surface = _ctx.SetupSurface("s", [
+            SurfaceTestContext.MakeComponent("tf", "TextField", new()
+            {
+                ["label"] = "Email",
+                ["value"] = "/email",
+                ["error"] = "Component error"
+            })
+        ], new { email = "bad" });
+
+        _ctx.SurfaceManager.SetValidationError("s", "/email", "Validation error");
+
+        var cut = _ctx.Render<A2UITextField>(p => p
+            .Add(c => c.Data, surface.Components["tf"])
+            .Add(c => c.Surface, surface));
+
+        var errorSpan = cut.Find(".a2ui-input-error");
+        Assert.Equal("Component error", errorSpan.TextContent.Trim());
     }
 
     public void Dispose() => _ctx.Dispose();

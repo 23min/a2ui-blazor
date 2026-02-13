@@ -17,11 +17,30 @@ public abstract class A2UIComponentBase : ComponentBase
     [Parameter, EditorRequired]
     public A2UISurfaceState Surface { get; set; } = default!;
 
-    [CascadingParameter]
-    public SurfaceManager? SurfaceManager { get; set; }
+    [Inject]
+    protected SurfaceManager? SurfaceManager { get; set; }
 
     [CascadingParameter(Name = "ScopeElement")]
     public JsonElement? ScopeElement { get; set; }
+
+    [Inject]
+    protected LocalActionRegistry? LocalActionRegistry { get; set; }
+
+    /// <summary>
+    /// Get a validation error for a bound property.
+    /// Checks the surface's ValidationErrors dictionary for the property's binding path.
+    /// </summary>
+    protected string? GetValidationError(string propertyName)
+    {
+        if (Data.Properties is null) return null;
+        if (!Data.Properties.TryGetValue(propertyName, out var element)) return null;
+        if (element.ValueKind != JsonValueKind.String) return null;
+
+        var path = element.GetString();
+        if (path is null || !path.StartsWith('/')) return null;
+
+        return Surface.ValidationErrors.GetValueOrDefault(path);
+    }
 
     /// <summary>
     /// Get a string property from the component data.
@@ -155,6 +174,37 @@ public abstract class A2UIComponentBase : ComponentBase
         var element = GetElement("action");
         if (element is null) return null;
         return JsonSerializer.Deserialize<A2UIAction>(element.Value.GetRawText());
+    }
+
+    /// <summary>
+    /// Apply an optimistic update to the data model for a bound property.
+    /// If the property value is a data binding path (starts with '/'),
+    /// the data model is updated locally before the server responds.
+    /// </summary>
+    protected void ApplyOptimisticUpdate(string propertyName, object? value)
+    {
+        if (SurfaceManager is null || Data.Properties is null) return;
+        if (!Data.Properties.TryGetValue(propertyName, out var element)) return;
+        if (element.ValueKind != JsonValueKind.String) return;
+
+        var path = element.GetString();
+        if (path is null || !path.StartsWith('/')) return;
+
+        var jsonValue = JsonSerializer.SerializeToElement(value);
+        SurfaceManager.UpdateDataModel(Surface.SurfaceId, path, jsonValue);
+    }
+
+    /// <summary>
+    /// Execute a local action (functionCall) if one is registered.
+    /// Returns true if a local action was found and executed.
+    /// </summary>
+    protected bool ExecuteLocalAction(A2UILocalAction localAction)
+    {
+        if (LocalActionRegistry is null || !LocalActionRegistry.IsRegistered(localAction.Call))
+            return false;
+
+        LocalActionRegistry.Execute(localAction.Call, localAction.Args);
+        return true;
     }
 
     /// <summary>

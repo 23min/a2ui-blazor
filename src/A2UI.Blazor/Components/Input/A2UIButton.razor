@@ -34,6 +34,10 @@
             };
             await OnAction.InvokeAsync(userAction);
         }
+        else if (action?.FunctionCall is not null)
+        {
+            ExecuteLocalAction(action.FunctionCall);
+        }
     }
 
     private object? ResolveContextValue(JsonElement element)
